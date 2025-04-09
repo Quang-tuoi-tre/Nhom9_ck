@@ -34,7 +34,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // ID----------------------------
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddDefaultTokenProviders().AddDefaultUI().AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Google Authentication ------------------0986125888
+//NhatQuang dep trai
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
