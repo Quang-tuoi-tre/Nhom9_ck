@@ -1,0 +1,228 @@
+﻿/*------------------------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------- LAYOUT -----------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------------------------------------------*/
+
+
+/* -------------------------- add.css ------------------------>*/
+/* Slide bên sidebar */
+@keyframes slideDown {
+    0% {
+        transform: translateY(0); /* Bắt đầu từ vị trí ban đầu */
+    }
+
+    100% {
+        transform: translateY(-100%); /* Di chuyển toàn bộ chiều cao của hình ảnh ra ngoài */
+    }
+}
+
+/* -------------------------- LAYOUT ------------------------>*/
+#content-page {
+    transition: margin-left 0.3s ease-in-out;
+/*    background-color: #dbf1f3 !important;*/
+}
+
+.menu-button {
+    margin-top: 20px;
+    width: 36px;
+    height: 35px;
+    background: none;
+    border: 1px solid gray;
+    cursor: pointer;
+}
+
+    .menu-button:hover {
+        background: gray;
+    }
+
+    .menu-button span {
+        display: block;
+        height: 3px;
+        width: 25px;
+        margin: 4px 4px;
+        background: #333;
+        transition: 0.4s;
+    }
+
+.gat {
+    display: flex;
+    cursor: pointer;
+}
+
+.chat {
+    display: none;
+    cursor: pointer;
+}
+
+.ok {
+    display: flex;
+    justify-content: space-between;
+}
+
+    .ok:hover {
+        cursor: pointer;
+        color: var(--iq-primary);
+    }
+
+.iconed {
+    margin-top: 13px;
+    font-size: 25px;
+}
+
+.some {
+    display: none; /* Hidden by default */
+    overflow: hidden; /* Ensures smooth transition */
+    transition: max-height 0.5s ease-out, opacity 0.5s ease; /* Transition for max-height and opacity */
+    max-height: 0; /* Collapsed by default */
+    opacity: 0; /* Transparent by default */
+}
+
+    .some.show {
+        display: block;
+        max-height: 500px; /* Set a large enough max-height for content */
+        opacity: 1;
+    }
+
+/* ------------------------------  ----------------------------->*/
+/* Slide animation */
+/* Style the dropdown menu */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure dropdown is above other elements */
+    max-height: 300px; /* Adjust max-height as needed */
+    overflow-y: auto; /* Enable scrolling if needed */
+    width: 100%; /* Set width to match search input */
+    box-sizing: border-box; /* Ensure width includes padding and
+                border */
+}
+
+/* ------------------------------  ----------------------------->*/
+/* Style each suggestion item */
+.suggestion {
+    padding: 10px;
+    cursor: pointer;
+}
+    /* Change color of suggestion item on hover */
+    .suggestion:hover {
+        background-color: #f4f4f4;
+    }
+
+.image-carousel {
+    margin-left: 10px;
+    position: absolute;
+    width: 93%;
+    height: 640px; /* Đảm bảo chiều cao chiếm toàn bộ không gian cha */
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel-slide {
+    display: flex;
+    flex-direction: column; /* Thay đổi chiều flex thành cột */
+    animation: slideDown 10s infinite; /* Hiệu ứng slide từ trên xuống */
+    height: 100%;
+}
+
+.image-carousel.with-spacing {
+    top: calc(20px + 180px); /* Thêm khoảng cách khi .some bị ẩn */
+}
+
+/* ------------------------------  ----------------------------->*/
+.carousel-image {
+    width: 100%;
+    height: 718px /* Chiều cao của mỗi hình ảnh */
+    object-fit: cover;
+    /* Đảm bảo hình ảnh không bị méo */
+}
+
+.suggestion img {
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.suggestion {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+    .suggestion div {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .suggestion div:first-child {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .suggestion div:last-child {
+            color: #555;
+            font-size: 12px;
+        }
+
+/* ------------------------------------------------  ---------------------------------------------------*/
+/* -------------------------- PARTICAL ------------------------>*/
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.nav-link.dropdown-toggle {
+    font-weight: bold;
+    color: #444;
+}
+
+.dropdown-menu {
+    margin-top: 0; /* Đảm bảo menu hiển thị sát với nút */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item.dropdown .dropdown-menu {
+    position: absolute; /* Đặt vị trí tuyệt đối */
+    left: calc(100% - 175px); /* Căn chỉnh cách bên trái -26px */
+    top: 100%; /* Đặt menu ngay dưới dropdown */
+}
+
+/* -------------------------- COMPONENT ------------------------>*/
+.cart-wrapper .cart-icon {
+    margin-right: 0px;
+    border-radius: unset;
+}
+
+.cart-wrapper {
+    position: relative;
+    display: flex;
+    width: 40px;
+    height: 40px;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+}
+
+.jbrHBQ {
+    color: rgb(255, 255, 255);
+    background: rgb(255, 66, 79);
+    height: 16px;
+    right: 0px;
+    top: -4px;
+    border-radius: 8px;
+    display: inline-block;
+    text-align: center;
+    font-weight: 700;
+    font-size: 10px;
+    line-height: 150%;
+    position: absolute;
+    padding: 0.5px 4px;
+}
+
+/* ------------------------------  ----------------------------->*/
+/* ------------------------------  ----------------------------->*/

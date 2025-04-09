@@ -1,0 +1,103 @@
+﻿/* ------------------------------------------------ FOOTER ---------------------------------------------------*/
+/* ---------------------------- CONTATCT US ---------------------------------*/
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* --------------------------------- ABOUT US ------------------------------ */
+.team-item {
+    background-color: #fff;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+/* */
+.team-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.team-item img {
+    transition: transform 0.3s ease;
+}
+
+.team-item:hover img {
+    transform: scale(1.05);
+}
+
+.btn-outline-primary {
+    border-radius: 50%;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+/* --------------------------- PRIVACY ------------------------------------ */
+hr {
+    border: 0;
+    border-top: 2px solid #2980b9;
+    margin: 20px 0;
+}
+
+p {
+    font-size: 16px;
+    margin-bottom: 15px;
+    line-height: 1.8;
+}
+
+strong {
+    color: #2980b9;
+}
+
+footer {
+    text-align: center;
+    font-size: 14px;
+    color: #7f8c8d;
+    margin-top: 50px;
+}
+
+/* Style cho các phần tử nội dung */
+.content-box {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+    /* */
+    .content-box p {
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    .content-box strong {
+        color: #e74c3c;
+    }
+
+/* -------------------------- TEARM OF USE ---------------------------------- */
+/* Thêm hiệu ứng hover cho các liên kết */
+a {
+    text-decoration: none;
+    color: #2980b9;
+}
+
+    a:hover {
+        color: #3498db;
+        text-decoration: underline;
+    }
+
+ul {
+    list-style: disc;
+    margin-left: 20px;
+}

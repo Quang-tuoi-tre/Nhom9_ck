@@ -1,0 +1,400 @@
+﻿/*--------------------------------------------------- HOME --------------------------------------------------------*/
+
+
+/*----------------- PANEL ---------------------*/
+/* Bố cục chung cho container */
+.container1 {
+    background-image: url('/images/banner/banner-image-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /*    background-color: white;*/
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+    /* Kiểu dáng cho các item trong slide */
+    .container1 .slide .item {
+        box-shadow: 0 -1px 21px #505050;
+    }
+
+/* Băng Rôn */
+.ribbon-wrapper {
+    position: absolute;
+    top: 40px;  /* Điều chỉnh vị trí theo chiều dọc */
+    right: -5px;  /* Đặt băng rôn vào góc phải */
+    z-index: 10;
+}
+
+.ribbon {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    background: #e63946;
+    padding: 5px 15px;
+    transform: rotate(45deg);  /* Xoay 45 độ */
+    width: 120px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Tạo đầu nhọn cho băng rôn */
+.ribbon::before, 
+.ribbon::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+.ribbon::before {
+    border-width: 0 15px 15px 0;
+    border-color: transparent #e63946 transparent transparent;
+    left: -15px;
+    top: 0;
+}
+
+.ribbon::after {
+    border-width: 15px 15px 0 0;
+    border-color: #e63946 transparent transparent transparent;
+    right: 0;
+    bottom: -15px;
+}
+
+/* SÁCH */
+.book-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff; /* Màu chữ sáng để nổi bật */
+    opacity: 1;
+    background: none !important; /* Ẩn nền chắc chắn */
+    box-shadow: none !important; /* Ẩn bất kỳ bóng đổ nào nếu có */
+}
+
+.book-title {
+    font-family: 'Roboto', sans-serif; /* Chỉnh kiểu chữ */
+    font-size: 36px; /* Kích thước chữ */
+    font-weight: bold; /* Đậm chữ */
+    text-transform: uppercase; /* Chữ hoa */
+    color: #ffffff; /* Màu chữ */
+    margin: 0;
+    padding: 0;
+}
+
+.book-price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #e74c3c; /* Màu đỏ cho giá sách */
+}
+
+/* Kiểu dáng và vị trí cụ thể cho từng item */
+.slide .item:nth-child(1),
+.slide .item:nth-child(2) {
+    z-index: 0;
+    top: 0;
+    left: 86px;
+    transform: translate(0, 0);
+    border-radius: 0;
+    width: 271px;
+    height: 419px;
+}
+
+.slide .item:nth-child(3) {
+    cursor: pointer;
+    left: 43%;
+}
+
+.slide .item:nth-child(4) {
+    cursor: pointer;
+    left: calc(50% + 138px);
+}
+
+.slide .item:nth-child(5) {
+    cursor: pointer;
+    left: calc(50% + 353px);
+}
+
+/* Nội dung của từng item - hover ảnh */
+.item .content {
+    position: absolute;
+    bottom: 124px;
+    top: 50%;
+    left: 88px;
+    width: 80%;
+    text-align: left;
+    color: #eee;
+    transform: translate(0, -50%);
+    font-family: system-ui;
+    display: none;
+    opacity: 0; 
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Nút điều khiển slide */
+.button1 {
+    margin-bottom: 50%; /* Đặt ở giữa theo chiều dọc */
+    display: flex;
+    justify-content: center; /* Căn giữa các nút trong vùng chứa */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+    /* Nút điều khiển slide */
+    .button1 button {
+        width: 40px; /* Chiều rộng nút */
+        height: 40px; /* Chiều cao nút */
+        border-radius: 50%; /* Hình tròn cho nút */
+        border: 2px solid white; /* Đường viền nút */
+        background-color: transparent; /* Nền trong suốt */
+        color: black; /* Màu chữ nút */
+        font-size: 24px; /* Kích thước icon */
+        display: flex;
+        justify-content: center; /* Căn giữa icon theo chiều ngang */
+        align-items: center; /* Căn giữa icon theo chiều dọc */
+        cursor: pointer; /* Con trỏ chuột khi hover */
+        z-index: 1;
+        transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng chuyển động mượt mà */
+    }
+
+        /* Hiệu ứng khi hover nút */
+        .button1 button:hover {
+            color: dimgray; /* Màu chữ khi hover */
+            font-weight: bold; /* Làm đậm chữ */
+            transform: scale(1.1); /* Phóng to nút khi hover */
+            background-color: rgba(255, 255, 255, 0.5); /* Nền trắng mờ khi hover */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Tạo hiệu ứng đổ bóng */
+        }
+
+
+button {
+    background-color: white;
+    border: none;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+/* Vùng chứa các nút điều khiển */
+.button1 {
+    position: absolute; /* Đặt vị trí tuyệt đối */
+    top: 50%; /* Đặt vị trí ở giữa theo chiều dọc */
+    left: 50%; /* Đặt vị trí ở giữa theo chiều ngang */
+    transform: translate(-50%, -50%); /* Điều chỉnh để căn giữa chính xác */
+    display: flex; /* Hiển thị các nút theo hàng ngang */
+    justify-content: space-between; /* Giãn cách đều các nút */
+    width: 100%; /* Chiều rộng vùng chứa là 100% */
+    max-width: 2000px; /* Giới hạn chiều rộng tối đa */
+    border-radius: 50px; /* Bo góc vùng chứa nút */
+    padding: 10px; /* Khoảng cách xung quanh các nút */
+}
+
+/*---------------------------------- RECOMENT BOOK AREA - 4 sách trên 1 hàng --------------------------------------*/
+/* When hovering over .slide, show the .btn element */
+.item:hover .content {
+    opacity: 1;
+}
+
+.bg-card {
+    text-align: center;  /*Center-aligns all text within each card */
+}
+
+h3 {
+    margin: 0.5em 0; /* Adjusts spacing around the title */
+}
+
+.text-red-500 {
+    display: block;  /*Ensures each price is on its own line */
+    margin-top: 0.25em;
+}
+
+.line-through {
+    display: block;
+    color: #6c757d; /* Ensures strikethrough price is muted */
+}
+
+.item-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.font-bold {
+    min-height: 2.8rem;
+    max-height: 2.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 18px;
+    max-width: 290px;
+}
+
+.cate-img:hover {
+    box-shadow: 3px 5px 6px 5px #888888;
+}
+
+.cate-img1 {
+    cursor: pointer;
+}
+
+/*---------------------------------- TOP FAVORITE / VIEWED --------------------------------------*/
+.iq-card-header {
+    background-color: #ffedf6;
+}
+
+    .iq-card-header .card-title {
+        font-size: 1.3rem; /* Kích thước chữ lớn hơn, bạn có thể chỉnh theo ý muốn */
+        line-height: 1.2; /* Tùy chỉnh khoảng cách dòng */
+        font-weight: bold;
+    }
+
+.bg-card {
+    text-align: center; /* Center-aligns all text within each card */
+    background-image: url('/images/banner/banner-image-bg-1.jpg'); /* Đường dẫn đến ảnh nền */
+    background-size: cover; /* Đảm bảo ảnh phủ đầy diện tích của phần tử */
+    background-position: center; /* Canh giữa ảnh nền */
+}
+
+h3 {
+    margin: 0.5em 0; /* Adjusts spacing around the title */
+}
+
+.text-red-500 {
+    display: block; /* Ensures each price is on its own line */
+    margin-top: 0.25em;
+}
+
+.line-through {
+    display: block;
+    color: #6c757d; /* Ensures strikethrough price is muted */
+}
+
+.item-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.font-bold {
+    min-height: 2.8rem;
+    max-height: 2.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 18px;
+    max-width: 290px;
+}
+
+/* Định nghĩa kiểu nổi bật */
+.highlight-index {
+    background-color: #ffcc00; /* Màu nền vàng */
+    color: #000; /* Màu chữ đen */
+    font-size: 1.5rem; /* Kích thước chữ lớn */
+    border-radius: 50%; /* Bo góc tròn */
+    width: 2.5rem; /* Chiều rộng của số */
+    height: 2.5rem; /* Chiều cao của số */
+    display: flex; /* Bật chế độ flexbox */
+    justify-content: center; /* Canh giữa ngang */
+    align-items: center; /* Canh giữa dọc */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng */
+    border: 2px solid #fff; /* Viền trắng */
+}
+
+    /* Thêm hiệu ứng hover */
+    .highlight-index:hover {
+        transform: scale(1.2); /* Phóng to khi hover */
+        transition: transform 0.2s ease-in-out; /* Hiệu ứng mượt */
+    }
+
+.cate-img:hover {
+    box-shadow: 3px 5px 6px 5px #888888;
+}
+
+.cate-img1 {
+    cursor: pointer;
+}
+
+.books-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.books-grid {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Hiển thị 4 item trên 1 hàng */
+    gap: 1rem;
+}
+
+.previous, .next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 2.5rem; /* Tăng kích thước font */
+    width: 4rem; /* Tăng kích thước nút */
+    height: 4rem;
+    border-radius: 50%;
+    background-color: #f1f1f1;
+    color: black;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+    .previous.disabled, .next.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .previous:hover, .next:hover {
+        transform: scale(1.15); /* Phóng to khi hover */
+        transition: transform 0.2s ease-in-out;
+        background-color: #04AA6D;
+        color: white;
+    }
+
+/*---------------------------------- BOOK info --------------------------------------*/
+.book-info {
+    position: fixed;
+    top: 50%;
+    left: 350px; /* Khoảng cách từ phần slide */
+    transform: translateY(-50%); /* Căn giữa theo chiều dọc */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    display: none;
+}
+
+.item.active .book-info {
+    display: block; /* Chỉ hiển thị khi .item có class active */
+}
+
+.item.active {
+    z-index: 1; /* Đảm bảo item hiện tại có độ ưu tiên hiển thị */
+}
+
+.book-info h3 {
+    font-size: 18px;
+    margin: 0 0 10px;
+    color: #333;
+}
+
+.book-info p {
+    margin: 0;
+    color: #666;
+}
+
+/*------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/

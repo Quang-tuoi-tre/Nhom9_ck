@@ -1,0 +1,185 @@
+﻿/* ---------------------------------------------------------------- HOME -----------------------------------------------------------------*/
+
+/* ---------------------- BANNER -------------------------*/
+/* Import FontAwesome */
+@import url('https://use.fontawesome.com/releases/v6.4.2/css/all.css');
+
+/* Bố cục chung cho container */
+.container1 {
+/*    background-image: url('~/images/banner/banner-image-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;*/
+    position: relative;
+    width: 1200px;
+    height: 420px;
+    background: #000000;
+    box-shadow: 0 30px 50px #dbdbdb;
+}
+
+    /* Kiểu dáng cho các item trong slide */
+    .container1 .slide .item {
+        width: 165px;
+        height: 250px;
+        position: absolute;
+        top: 50%;
+        transform: translate(0, -50%);
+        border-radius: 20px;
+        box-shadow: 0 30px 50px #505050;
+        background-position: 50% 50%;
+        background-size: cover;
+        display: inline-block;
+        transition: 0.5s;
+    }
+
+/* Kiểu dáng và vị trí cụ thể cho từng item */
+.slide .item:nth-child(1)
+{
+    top: 0;
+    left: 200px;
+    transform: translate(0, 0);
+    border-radius: 0;
+    width: 346px;
+    height: 419px;
+}
+
+.slide .item:nth-child(3) {
+    left: 50%;
+}
+
+.slide .item:nth-child(4) {
+    left: calc(50% + 210px);
+}
+
+.slide .item:nth-child(5) {
+    left: calc(50% + 430px);
+}
+
+.slide .item:nth-child(n + 6) {
+    left: calc(50% + 650px);
+    opacity: 0;
+}
+
+/* Nội dung của từng item */
+.item .content {
+    position: absolute;
+    top: 50%;
+    left: 100px;
+    width: 80%;
+    text-align: left;
+    color: #eee;
+    transform: translate( -50%);
+    font-family: system-ui;
+    display: block;
+}
+
+.slide .item:nth-child(2) .content {
+    display: block;
+}
+
+/* Hiệu ứng cho tên sách */
+.content .name {
+    color: #d85858;
+    font-size: 40px;
+    text-transform: uppercase;
+    font-weight: bold;
+    opacity: 0;
+    animation: animate 1s ease-in-out 1 forwards;
+}
+
+/* Mô tả sách */
+.content .des {
+    color: #000000;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: animate 1s ease-in-out 0.3s 1 forwards;
+}
+
+/* Nút bấm trong content */
+.content button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    animation: animate 1s ease-in-out 0.6s 1 forwards;
+    font-weight: bold;
+}
+
+/* Hiệu ứng animate */
+@keyframes animate {
+    from {
+        opacity: 0;
+        transform: translate(0, 100px);
+        filter: blur(33px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0);
+        filter: blur(0);
+    }
+}
+
+/* Nút điều khiển slide */
+.button1 {
+    width: 100%;
+    text-align: center;
+    position: static;
+    bottom: 20px;
+}
+
+button {
+    border: none;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.button1 button {
+    width: 40px;
+    height: 35px;
+    border-radius: 8px;
+    border: none;
+    margin: 0 5px;
+    border: 1px solid #000;
+
+    padding: 10px;
+    cursor: pointer;
+/*    color: wheat;*/
+    transition: background-color 0.3s ease;
+}
+
+    .button1 button:hover {
+        background: #ababab;
+        color: red;
+        font-weight: bold;
+    }
+
+/* Banner thành công */
+#success-banner {
+    animation: fadeInOut 3s ease;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

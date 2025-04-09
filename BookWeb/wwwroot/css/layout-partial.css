@@ -1,0 +1,326 @@
+﻿
+
+/*----------------------------------THÔNG TIN CÁ NHÂN (INDEX) / ĐỔI MẬT KHÂU (CHANGE PASSWORD)------------------------------------------------*/
+.container {
+    margin-top: 20px;
+}
+
+.list-group-item {
+    border: none;
+    font-size: 16px;
+}
+
+    .list-group-item.active {
+        background-color: #0dd6b8;
+        color: #fff;
+        font-weight: bold;
+    }
+
+#profile-form {
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+    font-weight: 600;
+}
+
+button[type="submit"] {
+    background-color: #0dd6b8;
+    border: none;
+    font-size: 16px;
+}
+
+    button[type="submit"]:hover {
+        background-color: #49f0d3;
+    }
+
+.list-group-item:focus, .list-group-item:active {
+    color: #0dd6b8 !important;
+    text-decoration: none;
+}
+
+/*ẨN HIỆN PASS*/
+.form-floating {
+    position: relative;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.toggle-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+/* ------------------------------------- BOOKMARK & NOTE / FAVORITES ------------------------------------------ */
+/* ------------------------------------- SIDEBAR ------------------------------------------ */
+/* Sidebar container styling */
+.sidebar {
+    background-color: #f8f9fa; /* Light background */
+    border-right: 2px solid #e0e0e0; /* Border on the right side for separation */
+    padding-top: 20px; /* Padding from the top */
+    height: 100vh; /* Full height */
+}
+
+/* Styling for the user image */
+.user-info .user-avatar {
+    max-height: 180px;
+    width: 180px;
+    border-radius: 50%; /* Circular avatar */
+    object-fit: cover; /* Ensure the image is well fitted */
+}
+
+/* Styling for the sidebar items */
+.sidebar-item {
+    font-size: 1.1rem;
+    padding: 15px 20px;
+    transition: background-color 0.3s ease, padding-left 0.2s ease;
+    color: #333; /* Dark text */
+}
+
+    /* Hover effect for the sidebar items */
+    .sidebar-item:hover {
+        background-color: #0dd6b8; /* Blue background on hover */
+        color: white; /* White text color */
+        padding-left: 30px; /* Indent when hovered */
+    }
+
+    /* Icon styling */
+    .sidebar-item i {
+        margin-right: 10px; /* Space between icon and text */
+        font-size: 1.3rem; /* Larger icons */
+    }
+
+/* ------------------ HEADER --------------------- */
+/* Container for both links */
+.favorite-book-container {
+    background-color: #f8f9fa; /* Light background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 20px; /* Inner padding for the block */
+    margin-top: 20px; /* Space between other content */
+}
+
+/* Flex container to align the two links to the left */
+.list-group-item.d-flex {
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    align-items: center;
+}
+
+/* Common styles for both links */
+.favorite-book-link {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the icon and text */
+    padding: 15px 30px; /* Padding inside each link */
+    border-radius: 8px;
+    color: #495057; /* Default text color */
+    font-size: 1.2rem; /* Larger text */
+    transition: all 0.3s ease; /* Smooth transition for background, color, and transform */
+    margin-right: 10px; /* Space between the two links */
+}
+
+    /* Hover effect for "Sách yêu thích" */
+    .favorite-book-link.sach-yeu-thich {
+        background-color: #ff6347; /* Tomato red for background */
+        color: white; /* White text */
+    }
+
+        .favorite-book-link.sach-yeu-thich:hover {
+            background-color: #e53e3e; /* Darker red on hover */
+            transform: scale(1.05); /* Slightly enlarge the item */
+        }
+
+        .favorite-book-link.sach-yeu-thich i {
+            color: white; /* White icon when hovered */
+            transition: color 0.3s ease; /* Smooth transition for icon color */
+        }
+
+    /* Hover effect for "Sách đánh dấu" */
+    .favorite-book-link.sach-danh-dau {
+        background-color: #28a745; /* Green for background */
+        color: white; /* White text */
+    }
+
+        .favorite-book-link.sach-danh-dau:hover {
+            background-color: #218838; /* Darker green on hover */
+            transform: scale(1.05); /* Slightly enlarge the item */
+        }
+
+        .favorite-book-link.sach-danh-dau i {
+            color: white; /* White icon when hovered */
+            transition: color 0.3s ease; /* Smooth transition for icon color */
+        }
+
+    /* Styling for the icon */
+    .favorite-book-link i {
+        margin-right: 10px; /* Space between icon and text */
+        font-size: 1.5rem; /* Larger icon */
+    }
+
+    /* Strong text style */
+    .favorite-book-link strong {
+        font-weight: bold;
+        font-size: 1.3rem; /* Slightly larger font */
+    }
+
+/*TIÊU ĐỀ - PHẢI*/
+.title-style {
+    font-size: 1.5rem; /* Kích thước font lớn */
+    font-weight: bold; /* Làm đậm văn bản */
+    color: #007bff; /* Màu sắc nổi bật */
+    text-transform: uppercase; /* Chữ hoa */
+    margin: 10px 0; /* Khoảng cách trên và dưới */
+    padding: 5px; /* Khoảng cách trong */
+    border-bottom: 2px solid #007bff; /* Đường viền dưới để tạo hiệu ứng tiêu đề */
+    display: flex;
+    align-items: center; /* Căn giữa các phần tử */
+}
+
+    .title-style i {
+        margin-right: 8px; /* Khoảng cách giữa icon và văn bản */
+    }
+
+/* ------------------CONTAINER--------------------- */
+.user-infor img:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.card {
+    position: relative;
+    transition: transform 0.3s ease-in-out;
+}
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+.card-img-top {
+    height: 100%; /* Make the image fill the height of the card */
+    object-fit: cover; /* Ensure the image covers the area without stretching */
+    width: 100%; /* Ensure the image spans the full width of the card */
+}
+
+.card-container {
+    position: relative;
+    height: 350px; /* Set a fixed height for the card */
+}
+
+/* Semi-transparent overlay to dim the background */
+.card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Darken the card */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-container:hover .card-overlay {
+    opacity: 1; /* Show the overlay on hover */
+}
+
+/* Centering buttons inside the card */
+.card-body {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-container:hover .card-body {
+    opacity: 1; /* Show the card content on hover */
+}
+
+.d-flex {
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-title {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.d-flex a,
+.d-flex form button {
+    font-size: 0.9rem;
+}
+/*---------------------------------- ORDER HISTORY--------------------------------------*/
+.order-history-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.order-status {
+    font-weight: bold;
+}
+
+/*---------------------- ORDER DETAIL ------------------------*/
+.order-details {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.order-info p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.order-info span {
+    font-weight: bold;
+}
+
+.order-status {
+    font-weight: bold;
+}
+
+.table {
+    margin-top: 20px;
+}
+
+.product-image {
+    width: 100px;
+    height: auto;
+}
+
+.order-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}

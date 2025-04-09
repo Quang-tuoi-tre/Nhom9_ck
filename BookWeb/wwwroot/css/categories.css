@@ -1,0 +1,72 @@
+﻿
+body {
+    background-color: #dbf1f3;
+}
+
+.iq-card .iq-card-body {
+    background-color: #efefef;
+}
+
+.iq-card .iq-card-header {
+    background-color: #faf2fb;
+}
+
+    .iq-card .iq-card-header .iq-header-title h4.card-title {
+        font-size: 1.3rem; /* Kích thước chữ lớn hơn, bạn có thể chỉnh theo ý muốn */
+        line-height: 1.2; /* Tùy chỉnh khoảng cách dòng */
+    }
+
+.bg-card {
+    background-image: url('/images/banner/banner-image-bg-1.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+/*---------------------------------- FAVORITE / BOOKMARK LIST ------------------------------------------------*/
+.card:hover {
+    transform: scale(1.05); /* Phóng to thẻ khi hover */
+    transition: transform 0.3s ease-in-out;
+}
+
+/*---------------------------------- DANH MỤC SÁCH (CATEGORIES) ------------------------------------------------*/
+.bg-card {
+    text-align: center; /* Center-aligns all text within each card */
+}
+
+h3 {
+    margin: 0.5em 0; /* Adjusts spacing around the title */
+}
+
+.text-red-500 {
+    display: block; /* Ensures each price is on its own line */
+    margin-top: 0.25em;
+}
+
+.line-through {
+    display: block;
+    color: #6c757d; /* Ensures strikethrough price is muted */
+}
+
+.item-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.font-bold {
+    min-height: 2.8rem;
+    max-height: 2.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 18px;
+    max-width: 290px;
+}
+
+.cate-img:hover {
+    box-shadow: 3px 5px 6px 5px #888888;
+}
+
+.cate-img1 {
+    cursor: pointer;
+}

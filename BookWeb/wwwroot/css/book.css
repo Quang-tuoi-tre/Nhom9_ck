@@ -1,0 +1,319 @@
+﻿/*-------------------------------------------------- BOOK --------------------------------------------------------*/
+body {
+    background-color: #dbf1f3 !important;
+}
+
+/* index */
+.bg-card {
+    background-image: url('/images/banner/banner-image-bg-1.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+/* detail */
+.iq-card .iq-card-header {
+    background-color: #faf2fb;
+}
+
+    .iq-card .iq-card-header .card-title {
+        font-size: 1.3rem; /* Kích thước chữ lớn hơn, bạn có thể chỉnh theo ý muốn */
+        line-height: 1.2; /* Tùy chỉnh khoảng cách dòng */
+        font-weight: bold;
+    }
+
+.iq-card .iq-card-body {
+    background-color: #faf2fb;
+}
+
+.iq-header-title h4.card-title {
+    font-size: 2rem; /* Kích thước chữ lớn hơn, bạn có thể chỉnh theo ý muốn */
+    font-weight: bold; /* Giữ chữ đậm */
+    line-height: 1.2; /* Tùy chỉnh khoảng cách dòng */
+}
+
+/*-------------------- DETAIL --------------------*/
+button:disabled {
+    background: #cccccc; /* Màu xám nhạt */
+    cursor: not-allowed;
+    opacity: 0.6; /* Làm nút mờ đi */
+}
+
+.reply-button {
+    color: #007bff;
+    cursor: pointer;
+}
+
+.reply-form {
+    margin-top: 10px;
+}
+
+.border-left {
+    border-left: 2px solid #ccc;
+}
+
+.media img {
+    border: 1px solid #ddd;
+}
+
+.comment2 {
+    margin: 10px 10px;
+    padding: 5px 5px;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+
+/* Định dạng chung cho ngôi sao */
+.stars {
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.star {
+    font-size: 30px;
+    color: #e4e4e4; /* Màu sao mặc định */
+    transition: color 0.3s;
+    border-radius: 50%; /* Tạo viền tròn quanh sao */
+    padding: 5px;
+}
+
+    .star.hovered,
+    .star.selected {
+        color: #FFA500; /* Màu vàng cho sao */
+        background-color: #faf2fb; /* Màu nền trắng - ĐÃ ĐỔI */
+    }
+
+.star1 {
+    color: #FFA500; /* Màu vàng cho sao */
+    background-color: #faf2fb; /* Màu nền trắng - ĐÃ ĐỔI */
+    font-size: 20px; /* Kích thước sao */
+    margin-right: 5px;
+}
+
+    .star1.empty {
+        color: #e4e4e4; /* Màu xám cho sao trống */
+    }
+
+/* .star1.half {
+                color: #FFA500;
+                position: relative;
+            }
+
+            .star1.half::before {
+                content: "\f089";
+                font-family: FontAwesome;
+                position: absolute;
+                left: 0;
+                color: #FFA500;
+            } */
+
+/* Cập nhật khoảng cách và độ rộng cho các phần trong layout */
+.bookmark-container {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    .bookmark-container h4 {
+        font-size: 18px;
+        color: #333;
+        font-weight: bold;
+    }
+
+.bookmark-item {
+    font-size: 16px;
+    padding: 10px;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+    .bookmark-item:hover {
+        background-color: #f1f1f1;
+    }
+
+    .bookmark-item button {
+        padding: 5px 10px;
+        background-color: #dc3545;
+        border: none;
+        border-radius: 5px;
+        color: white;
+    }
+
+        .bookmark-item button:hover {
+            background-color: #c82333;
+        }
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.card {
+    border-radius: 8px;
+}
+
+.card-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .list-group-item .note {
+        font-style: italic;
+        color: #6c757d;
+    }
+
+#BookmarkSection canvas {
+    border: 1px solid #ddd;
+    margin: auto;
+    display: block;
+}
+
+.audio-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(18, 18, 20, .8);
+    color: #fff;
+    z-index: 1000;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100px;
+}
+
+.audio-thumbnail {
+    height: 50px;
+    width: 50px;
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+
+.audio-content {
+    width: 95%;
+    display: flex;
+}
+
+.audio-info h4 {
+    margin: 0;
+    font-size: 16px;
+    color: white;
+}
+
+.audio-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #aaa;
+}
+
+audio {
+    flex-grow: 1;
+    margin: 0 15px;
+}
+
+.close-player {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/*-------------------- INDEX --------------------*/
+.font-bold {
+    min-height: 2.8rem;
+    max-height: 2.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 290px;
+}
+
+.bg-card {
+    text-align: center; /* Center-aligns all text within each card */
+    background-image: url('/images/banner/banner-image-bg-1.jpg'); /* Đường dẫn đến ảnh nền */
+    background-size: cover; /* Đảm bảo ảnh phủ đầy diện tích của phần tử */
+    background-position: center; /* Canh giữa ảnh nền */
+}
+
+h3 {
+    margin: 0.5em 0; /* Adjusts spacing around the title */
+}
+
+.text-red-500 {
+    display: block; /* Ensures each price is on its own line */
+    margin-top: 0.25em;
+}
+
+.line-through {
+    display: block;
+    color: #6c757d; /* Ensures strikethrough price is muted */
+}
+
+.item-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cate-img:hover {
+    box-shadow: 3px 5px 6px 5px #888888;
+}
+
+.cate-img1 {
+    cursor: pointer;
+}
+
+/* -------------FORM------------  */
+/* Tiêu đề */
+h2.text-primary {
+    font-size: 2rem;
+    color: #004085;
+    margin-bottom: 1.5rem;
+}
+
+/* Form */
+.search-form {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #faf2fb !important;
+}
+
+    .search-form .input-group {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-form .form-select, .search-form .form-control {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+    }
+
+    .search-form button {
+        border-radius: 0 6px 6px 0;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+        .search-form button:hover {
+            background-color: #0056b3;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+/* Responsive adjustments */
+/* media (max-width: 768px) {
+            .search-form .row {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .search-form .col-md-5,
+            .search-form .col-md-3 {
+                margin-bottom: 1rem;
+            }
+            }*/
