@@ -1,0 +1,119 @@
+﻿@using BookWeb.ViewModel
+@model HomeViewModel
+
+@{
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    int indexFavorite = Model.StartIndexFavorites + 1;
+}
+
+<div id="topFavorited" class="col-lg-12" data-current-group-favorites="@Model.CurrentGroupFavorites" data-total-groups-favorites="@Model.TotalGroupsFavorites">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-header d-flex justify-content-between align-items-center position-relative">
+            <div class="iq-header-title">
+                <h4 class="card-title mb-0">Top Lượt Yêu Thích</h4>
+            </div>
+        </div>
+
+        <div class="iq-card-body">
+            <!-- Container cho nút điều hướng và lưới sách -->
+            <div class="books-container d-flex align-items-center justify-content-between">
+                <!-- Nút Previous -->
+                @if (Model.CurrentGroupFavorites > 1)
+                {
+                    <a href="javascript:void(0);" id="prev-btn-favorites" class="previous round">&#8249;</a>
+                }
+                else
+                {
+                    <span class="previous round disabled">&#8249;</span>
+                }
+
+                <!-- Lưới hiển thị sách -->
+                <div class="grid books-grid">
+                    @foreach (var item in Model.TopBooksFavorites)
+                    {
+                        <div class="bg-card p-4 rounded-lg shadow-md cate-img" style="max-width:300px;">
+                            <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id">
+                                <div class="relative">
+                                    <img src="~/images/@item.ImageUrl" alt="@item.Name" class="cate-img1 w-full h-48 object-contain mb-2" />
+                                    <span class="absolute bottom-2 left-2 highlight-index font-bold">
+                                        @indexFavorite
+                                    </span>
+                                </div>
+                                <h3 class="font-bold">@item.Name</h3>
+                            </a>
+                            <span class="text-red-500 font-bold">
+                                @(item.Price > 0 ? String.Format(format, "{0:c0}", item.Price) : "Miễn phí")
+                                <span class="text-gray-500 mt-2">
+                                    (<i class="fa fa-heart text-danger mr-0"></i>
+                                    @item.FavoriteCount)
+                                </span>
+                            </span>
+                        </div>
+                        indexFavorite++;
+                    }
+                </div>
+
+                <!-- Nút Next -->
+                @if (Model.CurrentGroupFavorites < Model.TotalGroupsFavorites)
+                {
+                    <a href="javascript:void(0);" id="next-btn-favorites" class="next round">&#8250;</a>
+                }
+                else
+                {
+                    <span class="next round disabled">&#8250;</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK" crossorigin="anonymous"></script> *@
+@* <script src="~/js/home.js"></script> *@
+
+<script>
+    $(document).ready(function () {
+        let currentGroupFavorites = @Model.CurrentGroupFavorites;  // Lấy nhóm hiện tại của sách yêu thích
+        const totalGroupsFavorites = @Model.TotalGroupsFavorites;  // Tổng số nhóm sách yêu thích
+
+        // Hàm tải danh sách sách yêu thích
+        function loadFavorites(group) {
+            $.ajax({
+                url: `/Home/LoadFavorites?currentGroupTopFavorites=${group}`,
+                type: "GET",
+                success: function (result) {
+                    $("#topFavorited").html(result);  // Cập nhật nội dung phần sách yêu thích
+                    currentGroupFavorites = group;  // Cập nhật nhóm hiện tại
+                    toggleButtons();  // Cập nhật trạng thái các nút chuyển trang
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading favorites:", error);
+                }
+            });
+        }
+
+        // Cập nhật trạng thái các nút Next và Previous
+        function toggleButtons() {
+            // Nút Previous sẽ disabled nếu currentGroupFavorites <= 1
+            $("#prev-btn-favorites").toggleClass("disabled", currentGroupFavorites <= 1);
+            // Nút Next sẽ disabled nếu currentGroupFavorites >= totalGroupsFavorites
+            $("#next-btn-favorites").toggleClass("disabled", currentGroupFavorites >= totalGroupsFavorites);
+        }
+
+        // Khi nhấn nút Previous
+        $("#prev-btn-favorites").click(function () {
+            if (currentGroupFavorites > 1) {
+                loadFavorites(currentGroupFavorites - 1);  // Tải lại danh sách sách yêu thích nhóm trước đó
+            }
+        });
+
+        // Khi nhấn nút Next
+        $("#next-btn-favorites").click(function () {
+            if (currentGroupFavorites < totalGroupsFavorites) {
+                loadFavorites(currentGroupFavorites + 1);  // Tải lại danh sách sách yêu thích nhóm tiếp theo
+            }
+        });
+
+        // Cập nhật trạng thái các nút ngay từ đầu khi trang được tải
+        toggleButtons();
+    });
+</script>

@@ -1,0 +1,58 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var externalLogins = user != null ? await UserManager.GetLoginsAsync(user) : new List<UserLoginInfo>();
+    var hasExternalLogins = externalLogins.Any();
+}
+
+@* <link rel="stylesheet" href="~/css/layout.css"> *@
+
+
+<ul class="navbar-nav">
+    <li class="nav-item">
+        <a asp-area="" asp-controller="ShoppingCart" asp-action="Index"> @await Component.InvokeAsync("CartSummary")</a>
+    </li>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown">
+            @await Component.InvokeAsync("User")
+            @* Hello @User.Identity?.Name! *@
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        <i class="fas fa-user-circle"></i> Thông tin tài khoản
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="" asp-controller="FavoriteBooks" asp-action="MyFavorites">
+                        <i class="fas fa-heart"></i> Tủ sách của bạn
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="" asp-controller="ShoppingCart" asp-action="OrderHistory">
+                        <i class="fas fa-shopping-cart"></i> Đơn hàng
+                    </a>
+                </li>
+                <li>
+                    <form class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="btn btn-link p-0 text-dark">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Đăng ký</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a>
+        </li>
+    }
+</ul>

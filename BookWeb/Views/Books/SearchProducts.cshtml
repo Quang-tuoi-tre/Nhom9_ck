@@ -1,0 +1,105 @@
+﻿@model PaginatedList<BookWeb.Models.Book>
+
+@{
+    ViewData["Title"] = "SearchProducts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<link rel="stylesheet" href="~/css/book.css">
+
+@* <p>
+     @using (Html.BeginForm("SearchProducts", "Books", FormMethod.Get))
+     {
+         <input type="text" name="query" placeholder="Tìm Sản phẩm" />
+         <input type="submit" value="Tìm kiếm" />
+     }
+ </p> *@
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="iq-card-transparent mb-0">
+            <div class="d-block text-center">
+                <h2 class="mb-4 text-primary font-weight-bold">Tìm kiếm sách</h2>
+                <div class="w-100 iq-search-filter">
+                    <form asp-action="SearchProducts" method="get" class="search-form p-4 rounded shadow bg-white">
+                        <div class="row g-3 align-items-center">
+                            <!-- Ô nhập tìm kiếm -->
+                            <div class="col-md-5 col-sm-12">
+                                <div class="input-group">
+                                    <input type="text" name="query" value="@ViewData["Query"]"
+                                           class="form-control" placeholder="Tìm sản phẩm..." />
+                                    <button type="submit" class="btn btn-primary" style="color: #301616; font-weight: bold;">Tìm kiếm</button>
+                                </div>
+                            </div>
+
+                            <!-- Dropdown chọn danh mục -->
+                            <div class="col-md-3 col-sm-12 ml-4 mr-4">
+                                <select name="categoryId" asp-items="ViewBag.Categories"
+                                        class="form-select" onchange="this.form.submit()">
+                                    <option value="">Tất cả danh mục</option>
+                                </select>
+                            </div>
+
+                            <!-- Dropdown sắp xếp -->
+                            <div class="col-md-3 col-sm-12">
+                                <select name="sortOrder" class="form-select" onchange="this.form.submit()">
+                                    <option value="date_desc" selected="@(ViewData["SortOrder"]?.ToString() == "date_desc")">Mới nhất</option>
+                                    <option value="date_asc" selected="@(ViewData["SortOrder"]?.ToString() == "date_asc")">Cũ nhất</option>
+                                    <option value="price_asc" selected="@(ViewData["SortOrder"]?.ToString() == "price_asc")">Giá thấp đến cao</option>
+                                    <option value="price_desc" selected="@(ViewData["SortOrder"]?.ToString() == "price_desc")">Giá cao đến thấp</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kiểm tra xem có sản phẩm không -->
+        @if (Model.Any())
+        {
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                @foreach (var item in Model.Take(12))
+                {
+                    <div class="bg-card p-4 rounded-lg shadow-md cate-img">
+                        <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id">
+                            <img src="~/images/@item.ImageUrl" alt="Book Cover" class="cate-img1 w-full h-48 object-contain mb-2" />
+                            <h3 class="font-bold">@item.Name</h3>
+                        </a>
+                        <span class="text-red-500 font-bold">
+                            @(item.Price > 0 ? String.Format(format, "{0:c0}", item.Price) : "Miễn phí")
+                            <span class="text-gray-500 mt-2">
+                                (@item.AverageRating.ToString("0.0")
+                                <i class="fa fa-star text-warning ms-0"></i>)
+                            </span>
+                        </span>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Thông báo khi không có kết quả tìm kiếm -->
+            <div class="alert alert-warning mt-4" style="">
+                Không có kết quả tìm kiếm. Vui lòng thử lại với từ khóa khác.
+            </div>
+        }
+
+        <div style="margin: 50px;
+                    display: flex;
+                    justify-content: center;">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    @for (int i = 1; i <= @Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == @Model.PageIndex ? "active" : "")">
+
+                            <a class="page-link" href="@Url.Action("SearchProducts", new { pageNumber = i, categoryId = ViewData["CategoryId"], sortOrder = ViewData["SortOrder"] })">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
