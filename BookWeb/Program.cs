@@ -34,8 +34,12 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // ID----------------------------
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddDefaultTokenProviders().AddDefaultUI().AddEntityFrameworkStores<ApplicationDbContext>();
 
+<<<<<<< HEAD
 //Quang đẹp trai thiệt à ?
 //Quang đẹp trai thiệt à ae ?
+=======
+//Quang đẹp trai thiệt hả ae ơi ?
+>>>>>>> d159094 (xu li conflict)
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
