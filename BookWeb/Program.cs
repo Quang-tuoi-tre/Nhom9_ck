@@ -35,7 +35,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddDefaultTokenProviders().AddDefaultUI().AddEntityFrameworkStores<ApplicationDbContext>();
 
 
-//Đoàn duy đẹp trai  iệt hả ?
+//Đoàn duy đẹp trai thiệt phải không <
 
 
 builder.Services.AddAuthentication(options =>
