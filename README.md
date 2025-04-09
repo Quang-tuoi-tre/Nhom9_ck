@@ -62,7 +62,7 @@ Xin chào 👋, Chúng tôi là Nhóm 9
 ### Quang-tuoi-tre GitHub Stats:
 - Total Stars Earned: 0
 - Total Commits: 47
-- Total PRs: 9
+- Total PRs: 8
 - Total Issues: 0
 - Contributed to (last year): 0
 
