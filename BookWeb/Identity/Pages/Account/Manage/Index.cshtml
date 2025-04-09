@@ -1,0 +1,108 @@
+﻿@page
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Thông tin tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/layout-partial.css">
+
+<div class="container">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 sidebar">
+            <div class="user-info ml-2 mb-2" style="display:flex;">
+                <img src="@(string.IsNullOrEmpty(Model.Input.AvatarUrl) ? Url.Content("~/images/taixuong1.jpg") : Model.Input.AvatarUrl)" alt="Avatar" class="img-thumbnail" style="max-height: 380px; width: 330px; margin-right: 8px;" />
+            </div>
+
+            <div class="list-group">
+                <a asp-area="Identity" asp-page="/Account/Manage/Index"
+                class="list-group-item list-group-item-action sidebar-item active">
+                    <i class="fas fa-user-circle"></i> Thông tin tài khoản
+                </a>
+
+                <a asp-area="" asp-controller="FavoriteBooks" asp-action="MyFavorites"
+                class="list-group-item list-group-item-action sidebar-item">
+                    <i class="fas fa-heart"></i> Tủ sách của tôi
+                </a>
+
+                <a asp-area="" asp-controller="ShoppingCart" asp-action="OrderHistory"
+                class="list-group-item list-group-item-action sidebar-item">
+                    <i class="fas fa-shopping-cart"></i> Đơn hàng
+                </a>
+            </div>
+        </div>
+
+        <!-- Profile form -->
+        <div class="col-md-9">
+            <form id="profile-form" enctype="multipart/form-data" method="post" class="p-4 border rounded bg-white">
+                <div class="list-group-item mb-4" style="display:flex; justify-content:space-between; ">
+                    <div>
+                        <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                            <i class="fas fa-user"></i> <span style="font-weight:bold">
+                                Thông tin tài khoản
+                            </span>
+                        </a>
+                    </div>
+                    <div>
+                        @if (ViewData["IsGoogleAccount"] == null || !(bool)ViewData["IsGoogleAccount"])
+                        {
+                            <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword">
+                                <i class="fa-solid fa-lock"></i>  
+                                <span style="font-weight:bold; margin-left:5px;">
+                                    Đổi mật khẩu
+                                </span>
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                @* <partial name="_StatusMessage" for="StatusMessage" /> *@
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                <div class="row mb-3">
+                    <!-- Cột bên trái: Thông tin -->
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label asp-for="Input.FullName" class="form-label">Họ & Tên</label>
+                            <input asp-for="Input.FullName" class="form-control" placeholder="Thêm họ tên" />
+                            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.PhoneNumber" class="form-label">Số điện thoại</label>
+                            <input type="text" asp-for="Input.PhoneNumber" class="form-control"
+                                   maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'');" 
+                                   placeholder="Thêm số điện thoại" />
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Address" class="form-label">Địa chỉ giao hàng</label>
+                            <input asp-for="Input.Address" class="form-control" placeholder="Địa chỉ" />
+                            <span asp-validation-for="Input.Address" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Cột bên phải: Hình ảnh và Nút -->
+                    <div class="col-md-4">
+                        <div class="mb-3 d-flex justify-content-center align-items-center">
+                            <img id="avatar-preview" src="@Model.Input.AvatarUrl" alt="Avatar" class="img-thumbnail" style="max-width: 150px; max-height: 150px;" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.AvatarFile" class="form-label d-flex justify-content-center align-items-center">Ảnh đại diện</label>
+                            <input asp-for="Input.AvatarFile" class="form-control-file" id="avatar-input" />
+                            <span asp-validation-for="Input.AvatarFile" class="text-danger"></span>
+                        </div>
+
+                        <button id="update-profile-button" type="submit" class="btn btn-primary w-100">Cập nhật</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/identity-manage.js"></script>
