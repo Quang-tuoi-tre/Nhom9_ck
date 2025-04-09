@@ -1,0 +1,244 @@
+﻿@model PaginatedList<BookWeb.Models.Book>
+
+@{
+    ViewData["Title"] = "Danh Sách Sách";
+    Layout = "~/Areas/admin/Views/Shared/_LayoutAdmin.cshtml";
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="successMessage" class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+    <script type="text/javascript">
+        setTimeout(function () {
+            document.getElementById('successMessage').style.display = 'none';
+        }, 3000);
+    </script>
+}
+
+<h2 class="text-center mb-4">Danh sách sách</h2>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <a asp-action="Create" class="btn btn-success btn-lg">Thêm Mới</a>
+    @* <form action="/BooksManager/SearchProducts" method="get">
+        <input type="text" name="query" placeholder="Tìm Sản phẩm" />
+        <input type="submit" value="Search" />
+    </form> *@
+    @using (Html.BeginForm("Index", "BooksManager", FormMethod.Get, new { @class = "form-inline" }))
+    {
+        <div class="input-group">
+            <input type="text" name="query" value="@ViewBag.Query" class="form-control mr-2" placeholder="Tìm theo tên..." />
+            <button type="submit" class="btn btn-primary">Tìm Kiếm</button>
+        </div>
+    }
+</div>
+
+<table id="books" class="table table-striped table-bordered table-hover">
+    <thead class="thead-dark text-center">
+        <tr>
+            <th class="align-top">
+                <i class="fa-solid fa-image"></i>
+                Hình ảnh</th>
+            <th class="align-top">
+                <a href="@Url.Action("Index", "BooksManager", new { sortColumn = "Name", sortOrder = (ViewBag.SortColumn == "Name" && ViewBag.SortOrder == "asc" ? "desc" : "asc") })">
+                    <i class="fa-solid fa-book"></i> Tên Sách
+                    @if (ViewBag.SortColumn == "Name")
+                    {
+                        <i class="fa-solid @(ViewBag.SortOrder == "asc" ? "fa-sort-up" : "fa-sort-down")"></i>
+                    }
+                </a>
+            </th>
+            <th class="align-top">
+                <a href="@Url.Action("Index", "BooksManager", new { sortColumn = "Rating", sortOrder = (ViewBag.SortColumn == "Rating" && ViewBag.SortOrder == "asc" ? "desc" : "asc") })">
+                    <i class="fa-solid fa-star"></i> Điểm Đánh Giá
+                    @if (ViewBag.SortColumn == "Rating")
+                    {
+                        <i class="fa-solid @(ViewBag.SortOrder == "asc" ? "fa-sort-up" : "fa-sort-down")"></i>
+                    }
+                </a>
+            </th>
+            <th class="align-top">
+                <a href="@Url.Action("Index", "BooksManager", new { sortColumn = "Comments", sortOrder = (ViewBag.SortColumn == "Comments" && ViewBag.SortOrder == "asc" ? "desc" : "asc") })">
+                    <i class="fa-solid fa-comments"></i> Số Bình Luận
+                    @if (ViewBag.SortColumn == "Comments")
+                    {
+                        <i class="fa-solid @(ViewBag.SortOrder == "asc" ? "fa-sort-up" : "fa-sort-down")"></i>
+                    }
+                </a>
+            </th>
+            <th class="align-top">
+                <a href="@Url.Action("Index", "BooksManager", new { sortColumn = "Views", sortOrder = (ViewBag.SortColumn == "Views" && ViewBag.SortOrder == "asc" ? "desc" : "asc") })">
+                    <i class="fa-solid fa-eye"></i> Số Lượt Xem
+                    @if (ViewBag.SortColumn == "Views")
+                    {
+                        <i class="fa-solid @(ViewBag.SortOrder == "asc" ? "fa-sort-up" : "fa-sort-down")"></i>
+                    }
+                </a>
+            </th>
+            <th class="align-top">
+                <a href="@Url.Action("Index", "BooksManager", new { sortColumn = "Likes", sortOrder = (ViewBag.SortColumn == "Likes" && ViewBag.SortOrder == "asc" ? "desc" : "asc") })">
+                    <i class="fa-solid fa-thumbs-up"></i> Lượt Thích
+                    @if (ViewBag.SortColumn == "Likes")
+                    {
+                        <i class="fa-solid @(ViewBag.SortOrder == "asc" ? "fa-sort-up" : "fa-sort-down")"></i>
+                    }
+                </a>
+            </th>
+            <th class="align-top">
+                <a href="@Url.Action("Index", "BooksManager", new { sortColumn = "Sold", sortOrder = (ViewBag.SortColumn == "Sold" && ViewBag.SortOrder == "asc" ? "desc" : "asc") })">
+                    <i class="fa-solid fa-cash-register"></i> Sách đã bán
+                    @if (ViewBag.SortColumn == "Sold")
+                    {
+                        <i class="fa-solid @(ViewBag.SortOrder == "asc" ? "fa-sort-up" : "fa-sort-down")"></i>
+                    }
+                </a>
+            </th>
+            <th class="align-top">
+                <a href="@Url.Action("Index", "BooksManager", new { sortColumn = "Price", sortOrder = (ViewBag.SortColumn == "Price" && ViewBag.SortOrder == "asc" ? "desc" : "asc") })">
+                    <i class="fa-solid fa-dollar-sign"></i> Giá
+                    @if (ViewBag.SortColumn == "Price")
+                    {
+                        <i class="fa-solid @(ViewBag.SortOrder == "asc" ? "fa-sort-up" : "fa-sort-down")"></i>
+                    }
+                </a>
+            </th>
+            <th class="align-top">
+                <a href="@Url.Action("Index", "BooksManager", new { sortColumn = "Stock", sortOrder = (ViewBag.SortColumn == "Stock" && ViewBag.SortOrder == "asc" ? "desc" : "asc") })">
+                    <i class="fa-solid fa-box"></i> Sách tồn kho
+                    @if (ViewBag.SortColumn == "Stock")
+                    {
+                        <i class="fa-solid @(ViewBag.SortOrder == "asc" ? "fa-sort-up" : "fa-sort-down")"></i>
+                    }
+                </a>
+            </th>
+            <th class="align-top">
+                <i class="fa-solid fa-cogs"></i> Hành Động
+            </th>
+        </tr>
+    </thead>
+
+
+    <tbody class="text-center">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="/images/@item.ImageUrl" alt="Image" class="img-fluid" style="max-width: 100px; border-radius: 5px;" />
+                </td>
+                <td class="text-left">@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>
+                    @if (item.AverageRating > 0)
+                    {
+                        <div>
+                            <span>
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= Math.Round(item.AverageRating))
+                                    {
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star text-muted"></i>
+                                    }
+                                }
+                                <small>(@item.AverageRating.ToString("0.0"))</small>
+                            </span>
+                        </div>
+                        <div>
+                            <a href="@Url.Action("Ratings", "BooksManager", new { id = item.Id })"
+                               class="btn btn-link text-primary p-0">Xem Đánh Giá</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Chưa có đánh giá</span>
+                    }
+                </td>
+                <td>
+                    <a asp-controller="BooksManager" asp-action="Comments" asp-route-id="@item.Id" class="btn btn-link">Xem Bình Luận</a>
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.ViewCount)</td>
+                <td>@Html.DisplayFor(modelItem => item.FavoriteCount)</td>
+                <td>
+                    
+                    @if (item.SoldQuantity == 0)
+                    {
+                        <span class="text-muted">---</span>
+                    }
+                    else{
+                        <p> @item.SoldQuantity (@ViewBag.SoldQuantities[item.Id])</p>
+                    }
+                </td>
+                <td>
+                    @(item.Price > 0 ? String.Format(format, "{0:c0}", item.Price) : "Miễn phí")
+                </td>
+                <!-- Form thêm số lượng -->
+                <td>
+                    @if (item.Price != 0)
+                    {
+                        <span>@item.StockQuantity</span>
+                        <!-- Nút mở Modal -->
+                        <button class="btn btn-success" data-toggle="modal" data-target="#addModal"
+                                data-id="@item.Id" data-stock="@item.StockQuantity" data-name="@item.Name">
+                            Thêm SL
+                        </button>
+                    }
+                    else
+                    {
+                        <span>---</span> <!-- Nếu là sách miễn phí thì không hiển thị số lượng -->
+                    }
+                </td>
+                <td class="text-left">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Chỉnh Sửa</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Chi Tiết</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- PHÂN TRANG -->
+<div class="d-flex justify-content-center mt-4">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @for (int i = 1; i <= @Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == @Model.PageIndex ? "active" : "")">
+                    @* <a class="page-link" href="@Url.Action("Index", new { pageNumber = i })">@i</a> *@
+                    <a class="page-link" href="@Url.Action("Index", new { pageNumber = i, query = ViewBag.Query })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Thêm số lượng sách</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addForm" method="post" asp-action="AddQuantity">
+                <div class="modal-body">
+                    <input type="hidden" name="BookId" id="addBookId" />
+                    <div class="form-group">
+                        <label for="addBookQuantity">Số lượng thêm</label>
+                        <input type="number" class="form-control" id="addBookQuantity" name="AddQuantity" min="1" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-success">Thêm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

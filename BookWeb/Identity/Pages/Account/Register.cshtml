@@ -1,0 +1,91 @@
+﻿@page
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Areas/Identity/Pages/Shared/_LayoutIdentity.cshtml";
+}
+
+@* <link rel="stylesheet" href="~/css/identity.css"> *@
+
+
+<!-- Login Form -->
+<div class="col-lg-4 col-md-4 d-flex align-items-center justify-content-center">
+    <div class="sign-in-form rounded p-4" style="background-color:white; box-shadow:0 .5rem 1rem rgba(0,0,0,.15);">
+        <a href="/">
+            <i class="fa-solid fa-house" style="font-size: 22px; color: #0dd6b8;"></i>
+        </a>
+        <!-- Form Content Here -->
+        <h3 class="mb-0 text-center text-black">ĐĂNG KÝ</h3>
+        <p class="text-center text-black">Tạo Tài Khoản Mới</p>
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+
+            <hr />
+            <!-- Email Field -->
+            <div class="form-floating mb-3">
+                <label asp-for="Input.Email" class="form-label">Email</label>
+                <input asp-for="Input.Email" class="form-control" autocomplete="username"
+                       aria-required="true" placeholder="name@example.com"
+                       style="color: black; font-weight: bold;" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-floating mb-3 input-wrapper">
+                <label asp-for="Input.Password" class="form-label">
+                    Mật khẩu
+                </label>
+                <input id="PasswordRegister" asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true"
+                       placeholder="******" type="password" style="color: black; font-weight: bold;" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <i id="togglePasswordRegister" class="fa-solid fa-eye toggle-icon"></i>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="form-floating mb-3 input-wrapper">
+                <label asp-for="Input.ConfirmPassword" class="form-label">
+                    Xác nhận mật khẩu
+                </label>
+                <input id="ConfirmPasswordRegister" asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true"
+                       placeholder="******" type="password" style="color: black; font-weight: bold;" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                <i id="toggleConfirmPasswordRegister" class="fa-solid fa-eye toggle-icon"></i>
+            </div>
+
+            <hr />
+            <!-- Terms and Conditions Checkbox -->
+            <div class="d-inline-block w-100">
+                <div class="custom-control custom-checkbox d-inline-block mt-2 pt-1">
+                    <input type="checkbox" class="custom-control-input" id="customCheck1" required>
+                    <label class="custom-control-label" for="customCheck1">
+                        Đồng ý 
+                        <a asp-area="" asp-controller="Home" asp-action="TermOfUse" class="text-gray" target="_blank">Các điều khoản và điều kiện</a>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Register Button -->
+            <div class="text-center">
+                <button class="btn btn-primary w-100" type="submit">Đăng Ký</button>
+            </div>
+            <span class="text-dark dark-color d-inline-block line-height-2">Đã có tài khoản? <a asp-area="Identity" asp-page="/Account/Login" class="text-black">Đăng Nhập</a></span>
+        </form>
+    </div>
+</div>
+
+
+@* <script src="~/js/identity-account.js"></script> *@
+<script>
+    // JavaScript to toggle password visibility
+    document.getElementById("togglePasswordRegister").addEventListener("click", function () {
+        const passwordRegisterField = document.getElementById("PasswordRegister");
+        const type = passwordRegisterField.type === "password" ? "text" : "password";
+        passwordRegisterField.type = type;
+    });
+
+    document.getElementById("toggleConfirmPasswordRegister").addEventListener("click", function () {
+        const confirmPasswordRegisterField = document.getElementById("ConfirmPasswordRegister");
+        const type = confirmPasswordRegisterField.type === "password" ? "text" : "password";
+        confirmPasswordRegisterField.type = type;
+    });
+</script>

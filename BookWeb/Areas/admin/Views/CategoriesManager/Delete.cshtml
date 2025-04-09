@@ -1,0 +1,35 @@
+﻿@model BookWeb.Models.Category
+
+@{
+    ViewData["Title"] = "Xóa Thể loại";
+    Layout = "~/Areas/admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1 class="text-center text-danger mb-4">Xóa Thể loại</h1>
+
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h3 class="text-center text-warning">Bạn có chắc chắn muốn xóa thể loại này?</h3>
+
+        <!-- Thông tin thể loại cần xóa -->
+        <div class="form-group">
+            <label class="control-label">Tên thể loại</label>
+            <input type="text" class="form-control" value="@Model.Name" readonly />
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">Mô tả</label>
+            <textarea class="form-control" rows="4" readonly>@Model.Description</textarea>
+        </div>
+
+        <!-- Nút xóa và quay lại -->
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group d-flex justify-content-center">
+                <button type="submit" class="btn btn-danger mx-3">Xóa</button>
+                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+            </div>
+        </form>
+    </div>
+</div>
