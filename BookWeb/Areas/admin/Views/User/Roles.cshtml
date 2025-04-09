@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
+
+<h2 class="text-center mb-4">Quản lý Quyền</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tên Role</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td>
+                    <!-- Chỉnh sửa quyền -->
+                    <button class="btn btn-warning" data-toggle="modal" data-target="#editRoleModal-@role.Name">Chỉnh sửa</button>
+                    <!-- Xóa quyền -->
+                    <form asp-action="DeleteRole" asp-route-roleName="@role.Name" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa quyền này?')">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+
+            <!-- Modal Sửa quyền -->
+            <div class="modal fade" id="editRoleModal-@role.Name" tabindex="-1" role="dialog" aria-labelledby="editRoleModalLabel-@role.Name" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editRoleModalLabel-@role.Name">Chỉnh Sửa Quyền: @role.Name</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" asp-action="EditRole">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="RoleName" value="@role.Name" />
+                                <div class="form-group">
+                                    <label for="newRoleName">Tên quyền mới</label>
+                                    <input type="text" class="form-control" id="newRoleName" name="NewRoleName" value="@role.Name" required />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </tbody>
+</table>
+
+<div class="text-center mt-3">
+    <a class="btn btn-success " data-toggle="modal" data-target="#createRoleModal">Thêm quyền mới</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</div>
+
+<!-- Modal Thêm quyền -->
+<div class="modal fade" id="createRoleModal" tabindex="-1" role="dialog" aria-labelledby="createRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createRoleModalLabel">Thêm Quyền Mới</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-action="CreateRole">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label for="roleName">Tên quyền</label>
+                        <input type="text" class="form-control" id="roleName" name="RoleName" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
