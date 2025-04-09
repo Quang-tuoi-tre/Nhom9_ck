@@ -1,0 +1,65 @@
+﻿
+@{
+    @model IEnumerable<Book>
+
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    int index = ViewBag.StartIndex == null ? 1 : ViewBag.StartIndex + 1; 
+    var currentGroup = ViewBag.CurrentGroup ?? 1;
+    var totalGroups = ViewBag.TotalGroups ?? 1;
+}
+
+<link rel="stylesheet" href="~/css/categories.css">
+
+<div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-header d-flex justify-content-between align-items-center position-relative">
+            <div class="iq-header-title">
+                <h4 class="card-title mb-0">Top Lượt thích</h4>
+            </div>
+        </div>
+        <div class="iq-card-body">
+            <!-- Container cho nút điều hướng và lưới sách -->
+            <div class="books-container d-flex align-items-center justify-content-between">
+                <!-- Nút Previous -->
+                @if (currentGroup > 1)
+                {
+                    <a href="@Url.Action("TopViewed", new { currentGroup = currentGroup - 1 })" class="previous round">&#8249;</a>
+                }
+                else
+                {
+                    <span class="previous round disabled">&#8249;</span>
+                }
+                <!-- Lưới hiển thị sách -->
+                <div class="grid books-grid">
+                    @foreach (var item in Model)
+                    {
+                        <div class="bg-card p-4 rounded-lg shadow-md cate-img" style="max-width:300px;">
+                            <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id">
+                                <div class="relative">
+                                    <img src="~/images/@item.ImageUrl" alt="@item.Name" class="cate-img1 w-full h-48 object-contain mb-2" />
+                                    <span class="absolute bottom-2 left-2 highlight-index font-bold">
+                                        @index
+                                    </span>
+                                </div>
+                                <h3 class="font-bold">@item.Name</h3>
+                            </a>
+                            <span class="text-red-500 font-bold">
+                                @(item.Price > 0 ? String.Format(format, "{0:c0}", item.Price) : "Miễn phí")
+                            </span>
+                        </div>
+                        index++;
+                    }
+                </div>
+                <!-- Nút Next -->
+                @if (currentGroup < totalGroups)
+                {
+                    <a href="@Url.Action("TopViewed", new { currentGroup = currentGroup + 1 })" class="next round">&#8250;</a>
+                }
+                else
+                {
+                    <span class="next round disabled">&#8250;</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>

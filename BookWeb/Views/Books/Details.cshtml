@@ -1,0 +1,1034 @@
+﻿@using BookWeb.Migrations
+@using BookWeb.Repositories
+@using System.Security.Claims
+@model BookWeb.Models.Book
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    string priceDisplay = Model.Price == 0 ? "Miễn phí" : Model.Price.ToString("#,0", format);
+    bool isFavorite = (bool)ViewData["IsFavorite"];
+    var hasRated = ViewData["HasRated"] as bool? ?? false; // Lấy thông tin về việc người dùng đã đánh giá hay chưa
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="~/css/book.css">
+
+
+<div class="row" style="width:100%">
+    <div class="col-sm-12">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+            <div class="iq-card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">Thông tin</h4>
+            </div>
+            <div class="iq-card-body pb-0">
+                <div class="description-contens align-items-top row">
+                    <div class="col-md-6">
+                        <div class="iq-card-transparent iq-card-block iq-card-stretch iq-card-height">
+                            <div class="iq-card-body p-0">
+                                <div class="row align-items-center">
+                                    <div class="col-3">
+                                        <ul id="description-slider-nav" class="list-inline p-0 m-0 d-flex align-items-center">
+                                            <li>
+                                                <a href="javascript:void(0);"></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-9">
+                                        <ul id="description-slider" class="list-inline p-0 m-0 d-flex align-items-center">
+                                            <img src="~/images/@Model.ImageUrl" alt="Product Image" style="max-width:300px;" />
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="iq-card-transparent iq-card-block iq-card-stretch iq-card-height">
+                            <div class="iq-card-body p-0">
+                                <h1 class="mb-3fw-bold" style="font-size: 1.5rem; text-align: left;">@Html.DisplayFor(model => model.Name)</h1>
+                                
+                                <div class="rate-part">
+                                    @if (Model.AverageRating > 0)
+                                    {
+                                        <p>
+                                            @Model.AverageRating.ToString("0.0") 
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= Math.Floor(Model.AverageRating)) // Sao đầy
+                                                {
+                                                    <span class="star1 full">
+                                                        <i class="fa fa-star"></i>
+                                                    </span>
+                                                }
+                                                else if (i == Math.Ceiling(Model.AverageRating) && Model.AverageRating % 1 != 0) // Nửa sao
+                                                {
+                                                    <span class="star1 half">
+                                                        <i class="fa-regular fa-star-half-stroke" style="color:  #FFA500;"></i>
+                                                    </span>
+                                                }
+                                                else // Sao trống
+                                                {
+                                                    <span class="star1 empty">
+                                                        <i class="fa fa-star"></i>
+                                                    </span>
+                                                }
+                                            }
+                                            <span class="average-rating"> (@ViewData["RatingCount"] lượt đánh giá) </span>
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p>Chưa có đánh giá.</p>
+                                    }
+                                </div>
+
+                                <br />
+                                <div class="text-primary mb-4">
+                                    Tóm Tắt: <span class="text-body">@Html.DisplayFor(model => model.Description)</span>
+                                </div>
+                                <div class="text-primary mb-4">Tác giả: <span class="text-body">@Html.DisplayFor(model => model.Author.Name)</span></div>
+                                <div class="text-primary mb-4">Thể loại: <span class="text-body">@Html.DisplayFor(model => model.Category.Name)</span></div>
+
+                                @if (!hasRated)
+                                {
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <form asp-controller="Books" asp-action="AddRating" method="post" id="rating-form">
+                                            <!-- Input ẩn để lưu giá trị sao -->
+                                            <input type="hidden" id="star-value" name="star" value="0" />
+                                            <input type="hidden" name="bookId" value="@Model.Id" />
+
+                                            <!-- Form đánh giá -->
+                                            <div class="rating-form" style="max-height:50px; margin-bottom: 55px;">
+                                                <p>Đánh giá:</p>
+                                                <div class="stars" onmouseleave="resetHover()">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        <span class="star" value="@i" onmouseover="showRatingMessage(@i)" onclick="submitRating(@i)">
+                                                            <i class="fa fa-star"></i>
+                                                        </span>
+                                                    }
+                                                </div>
+                                                <p id="rating-message" style="margin-top: 5px;"></p>
+                                            </div>
+
+                                            <!-- Nút gửi -->
+                                            <button type="submit" class="btn btn-primary mt-2">Gửi đánh giá</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-primary" onclick="showLoginModal()">Đánh giá</button>
+                                        // ẩn nút khi không thoả điều kiện, hạn chế thông báo lỗi ở console
+                                        <button id="rating-form" type="submit" style="display: none;"></button>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="rated-message">
+                                        Bạn đã đánh giá sản phẩm với:
+                                        <span class="rating-value">@ViewBag.RatedStar</span>
+                                        <span class="star1">
+                                            @for (int i = 1; i <= ViewBag.RatedStar; i++)
+                                            {
+                                                <i class="fa fa-star"></i>
+                                            }
+                                        </span>
+                                    </p>
+                                    <button id="rating-form" type="submit" style="display: none;"></button>
+                                }
+                                <br />
+
+                                <br />
+                                <div class="price d-flex align-items-center mb-2">
+                                    <span style="font-size: 1.5rem; color: #c30000; font-weight: bold;">@priceDisplay</span>
+                                    @if (Model.Price != 0)
+                                    {
+                                        <p class="d-flex align-items-center">
+                                            <i class="fa-solid fa-shopping-cart text-success ml-3"></i>
+                                            <span class="ml-2">( @Model.SoldQuantity đã bán )</span>
+                                        </p>
+                                    }
+                                </div>
+
+                                <!-- SHOPPING CART -->
+                                <div class="mb-4 d-flex align-items-center">
+                                    <!-- FAVORITE -->
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        if (isFavorite)
+                                        {
+                                            <form asp-controller="FavoriteBooks" asp-action="RemoveFromFavorites" method="post">
+                                                <input type="hidden" name="bookId" value="@Model.Id" />
+                                                <button class="btn btn-danger mr-1">Đã thích</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-controller="FavoriteBooks" asp-action="AddToFavorites" method="post">
+                                                <input type="hidden" name="bookId" value="@Model.Id" />
+                                                <button class="btn btn-primary mr-1">Yêu thích</button>
+                                            </form>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-primary mr-1" onclick="showLoginModal()">Yêu thích</button>
+                                    }
+
+                                    @if (Model.Price == 0)
+                                    {
+                                        <button id="read-button" class="btn btn-primary view-more mr-1" onclick="showBookDetail()">Đọc ngay</button>
+
+                                        <!-- AUDIO BOOK -->
+                                        @if (!string.IsNullOrEmpty(Model.AudioFileUrl))
+                                        {
+                                            <button type="button" class="btn btn-primary mr-1" id="play-audio">
+                                                <i class="fa-solid fa-play"></i> Nghe ngay
+                                            </button>
+
+                                            <div id="audio-player" class="audio-player" style="display: none;">
+                                                <div class="audio-content">
+                                                    <img src="~/images/@Model.ImageUrl" alt="Thumbnail" class="audio-thumbnail">
+                                                    <div class="audio-info">
+                                                        <h4>@Model.Description</h4>
+                                                        <p>@Model.Author.Name</p>
+                                                    </div>
+                                                    <audio id="audio" controls>
+                                                        <source src="@Model.AudioFileUrl" type="audio/ogg">
+                                                        Trình duyệt không hỗ trợ âm thanh.
+                                                    </audio>
+                                                    <button id="close-player" class="close-player"><i class="fa-solid fa-x"></i></button>
+                                                </div>
+                                            </div>
+                                        }
+                                        else{
+                                            // ẩn nút khi không thoả điều kiện, hạn chế thông báo lỗi ở console
+                                            <button id="play-audio" style="display: none;"></button>
+                                            <button id="close-player" style="display: none;" ></button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <!-- Hiển thị số lượng sản phẩm còn hàng -->
+                                        <div class="ml-1">
+                                            @if (Model.StockQuantity == 0)
+                                            {
+                                                <span class="badge badge-danger">Hết hàng</span>
+                                            }
+                                            else
+                                            {
+                                                <!-- Mua ngay -->
+                                                <a asp-controller="ShoppingCart" asp-action="AddToCart" asp-route-id="@Model.Id"
+                                                   class="btn btn-primary view-more mr-1" onclick="updateCartOnBuyNow(@Model.Id)">
+                                                    Mua ngay
+                                                </a>
+
+                                                <!-- Thêm vào giỏ hàng -->
+                                                <a href="javascript:void(0);"
+                                                   class="btn btn-primary view-more mr-1"
+                                                   onclick="addToCartWithBanner(@Model.Id)">
+                                                    Thêm vào giỏ hàng
+                                                </a>
+
+                                                <span class="badge badge-success">Còn (@Model.StockQuantity) sản phẩm</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- -------------------------------------------------------------------------------------------- -->
+            <!-- PDF Viewer -->
+            <div class="container-fluid mt-4" id="pdfBookmarkSection" style="display: none;">
+                <div class="row" id="BookmarkSection">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <!-- Cột bên trái: Form và danh sách dấu trang -->
+                        <div class="col-md-4">
+                            <!-- Card: Form Lưu Dấu Trang -->
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5>Lưu Dấu Trang</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="bookmarkForm" method="post" asp-action="SetBookmark" asp-controller="Bookmark" onsubmit="return saveBookmark(event)">
+                                        <input type="hidden" name="bookId" value="@Model.Id" />
+                                        <div class="form-group">
+                                            <label for="bookmarkNote">Ghi chú:</label>
+                                            <input type="text" id="bookmarkNote" class="form-control" placeholder="Thêm ghi chú" />
+                                        </div>
+                                        <button type="submit" class="btn btn-success w-100">Lưu</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Card: Danh Sách Dấu Trang -->
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-secondary text-white d-flex justify-content-between">
+                                    <h5>Danh Sách Dấu Trang</h5>
+                                    <span id="bookmarkCount" class="badge badge-light ml-auto">0/10</span>
+                                </div>
+                                <div class="card-body">
+                                    <ul id="bookmarkList" class="list-group">
+                                        <!-- Các dấu trang sẽ được thêm tại đây -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-4 d-flex justify-content-center align-items-center">
+                            <div class="card shadow-sm w-100">
+                                <div class="card-header bg-warning text-white text-center">
+                                    <h5>Đăng Nhập Để Sử Dụng Dấu Trang</h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <p class="mb-3">Bạn cần đăng nhập để lưu dấu trang và ghi chú.</p>
+                                    <button class="btn btn-primary w-100" onclick="showLoginModal()">Đăng nhập</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Cột bên phải: Hiển thị PDF -->
+                    <div class="col-md-8">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-info text-white">
+                                <h5>Nội dung</h5>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between">
+                                <button id="prevButton" class="btn btn-secondary">Trang Trước</button>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" id="currentPage" name="pageNumber" class="form-control" style="width: 70px;" readonly />
+                                    <span class="ml-2">/</span>
+                                    <span id="totalPages" class="ml-2">1</span>
+                                </div>
+                                <button id="nextButton" class="btn btn-secondary">Trang Sau</button>
+                            </div>
+                            <div class="card-body" id="pdfContainer" style="height: auto; overflow: auto;">
+                                <!-- PDF sẽ được render tại đây -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* <div class="iq-card book-detail" id="book-detail" style="display: none;">
+            <div class="iq-card-body p-0">
+            <embed src="@Model.pdf" type="application/pdf" style="width: 100%; height: 90vh;" />
+            </div>
+            </div>    *@
+
+            <!-- -------------------------------------------------------------------------------------------- -->
+            @* 25/11 - BÌNH LUẬN*@
+            <div class="comment2" style=" margin:15px 15px;
+                                          padding: 10px 10px;
+                                          box-shadow:0 .5rem 1rem rgba(0,0,0,.15);">
+                <span style="font-weight:600;font-size:14px; line-height:25px">Bình luận (@Model.CommentCount)</span>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @* <span style="font-weight:600;font-size:14px; line-height:25px">Bình luận</span> *@
+                    <form asp-controller="Comments" asp-action="AddComment" method="post">
+                        <input type="hidden" name="bookId" value="@Model.Id" />
+                        <textarea id="commentContent" name="content" class="form-control" placeholder="Viết bình luận..." required></textarea>
+                        <button id="submitBtn" class="btn btn-primary mt-2" disabled>Gửi bình luận</button>
+                    </form>
+                }
+                else
+                {
+                    <button class="btn btn-primary" onclick="showLoginModal()">Đăng nhập</button>
+                }
+
+                <!-- Hiển thị bình luận -->
+                <hr style="border-top: 1px solid gray; margin-top:20px; margin-bottom:20px;" />
+                <ul class="list-unstyled" style="margin-left:10px">
+                    @foreach (var comment in Model.Comments.Where(c => c.ParentId == null).OrderBy(c => c.CreatedAt))
+                    {
+                        <li class="media mb-3">
+                            <!-- Avatar và tên người dùng -->
+                            <img class="mr-3 " src="@comment.User?.AvatarUrl" alt="Avatar" width="50" height="50">
+                            <div class="media-body">
+                                <h5 class="mt-0 mb-1">
+                                    @if (!string.IsNullOrEmpty(comment.User?.FullName))
+                                    {
+                                        @comment.User.FullName
+                                    }
+                                    else
+                                    {
+                                        @comment.User?.UserName
+                                    }
+                                </h5>
+                                <p>@comment.Content</p>
+                                <small class="text-muted comment-time" data-time="@comment.CreatedAt.ToString("o")"></small>
+
+                                <!-- Nút phản hồi và form -->
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    @if (User.IsInRole("admin"))
+                                    {
+                                        <form asp-controller="Comments" asp-action="DeleteComment" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@comment.Id" />
+                                            <button class="btn btn-link btn-sm text-danger" onclick="return confirm('Bạn có chắc muốn xóa bình luận này?');">Xóa</button>
+                                        </form>
+                                    }
+
+                                    <button class="btn btn-link btn-sm reply-button" data-comment-id="@comment.Id">Phản hồi</button>
+
+                                    <!-- Form phản hồi -->
+                                    <div id="reply-form-@comment.Id" class="mt-2 reply-form" style="display: none;">
+                                        <form asp-controller="Comments" asp-action="AddReply" method="post">
+                                            <input type="hidden" name="parentId" value="@comment.Id" />
+                                            <textarea name="content" class="form-control mb-2" placeholder="Nhập phản hồi..." required></textarea>
+                                            <button class="btn btn-primary btn-sm">Gửi phản hồi</button>
+                                        </form>
+                                    </div>
+                                }
+
+                                <!-- Hiển thị phản hồi cấp độ 1-->
+                                @if (comment.Replies != null && comment.Replies.Any())
+                                {
+                                    <ul class="list-unstyled mt-3 pl-3 border-left">
+                                        @foreach (var reply in comment.Replies.OrderBy(r => r.CreatedAt))
+                                        {
+                                            <li class="media mb-2">
+                                                <img class="mr-3 " src="@reply.User?.AvatarUrl" alt="Avatar" width="40" height="40">
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">
+                                                        @if (!string.IsNullOrEmpty(reply.User?.FullName))
+                                                        {
+                                                            @reply.User.FullName
+                                                        }
+                                                        else
+                                                        {
+                                                            @reply.User?.UserName
+                                                        }
+                                                    </h6>
+                                                    <p>@reply.Content</p>
+                                                    <small class="text-muted comment-time" data-time="@reply.CreatedAt.ToString("o")"></small>
+
+                                                    @if (User.Identity.IsAuthenticated)
+                                                    {
+                                                        @if (User.IsInRole("admin"))
+                                                        {
+                                                            <form asp-controller="Comments" asp-action="DeleteComment" method="post" class="d-inline">
+                                                                <input type="hidden" name="id" value="@reply.Id" />
+                                                                <button class="btn btn-link btn-sm text-danger" onclick="return confirm('Bạn có chắc muốn xóa phản hồi này?');">Xóa</button>
+                                                            </form>
+                                                        }
+
+                                                        <button class="btn btn-link btn-sm reply-button" data-comment-id="@reply.Id">Phản hồi</button>
+
+                                                        <!-- Form phản hồi -->
+                                                        <div id="reply-form-@reply.Id" class="mt-2 reply-form" style="display: none;">
+                                                            <form asp-controller="Comments" asp-action="AddReply" method="post">
+                                                                <input type="hidden" name="parentId" value="@reply.Id" />
+                                                                <textarea name="content" class="form-control mb-2" placeholder="Nhập phản hồi..." required></textarea>
+                                                                <button class="btn btn-primary btn-sm">Gửi phản hồi</button>
+                                                            </form>
+                                                        </div>
+                                                    }
+
+                                                    <!-- 28/11 - Hiển thị phản hồi cấp 2 -->
+                                                    @if (reply.Replies != null && reply.Replies.Any())
+                                                    {
+                                                            <ul class="list-unstyled mt-3 pl-3 border-left">
+                                                            @foreach (var subReply in reply.Replies)
+                                                            {
+                                                                <li class="media mb-2">
+                                                                    <img class="mr-3" src="@subReply.User?.AvatarUrl" alt="Avatar" width="40" height="40">
+                                                                    <div class="media-body">
+                                                                            <h6 class="mt-0 mb-1">
+                                                                            @if (!string.IsNullOrEmpty(reply.User?.FullName))
+                                                                            {
+                                                                                @reply.User.FullName
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @reply.User?.UserName
+                                                                            }
+                                                                        </h6>
+                                                                        <p>@subReply.Content</p>
+                                                                        <small class="text-muted comment-time" data-time="@subReply.CreatedAt.ToString("o")"></small>
+
+                                                                    @if (User.Identity.IsAuthenticated)
+                                                                    {
+                                                                        @if (User.IsInRole("admin"))
+                                                                        {
+                                                                            <form asp-controller="Comments" asp-action="DeleteComment" method="post" class="d-inline">
+                                                                                <input type="hidden" name="id" value="@reply.Id" />
+                                                                                <button class="btn btn-link btn-sm text-danger" onclick="return confirm('Bạn có chắc muốn xóa phản hồi này?');">Xóa</button>
+                                                                            </form>
+                                                                        }
+
+                                                                        <button class="btn btn-link btn-sm reply-button" data-comment-id="@reply.Id">Phản hồi</button>
+
+                                                                        <!-- Form phản hồi -->
+                                                                        <div id="reply-form-@reply.Id" class="mt-2 reply-form" style="display: none;">
+                                                                            <form asp-controller="Comments" asp-action="AddReply" method="post">
+                                                                                <input type="hidden" name="parentId" value="@reply.Id" />
+                                                                                <textarea name="content" class="form-control mb-2" placeholder="Nhập phản hồi..." required></textarea>
+                                                                                <button class="btn btn-primary btn-sm">Gửi phản hồi</button>
+                                                                            </form>
+                                                                        </div>
+                                                                    }
+                                                                    </div>
+
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal xác nhận -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h3 class="modal-title" id="loginModalLabel" style="font-weight: bold; font-size: 1.5rem;">Yêu cầu đăng nhập </h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="lead">Bạn cần đăng nhập để thực hiện tính năng này.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="redirectToLogin()">Đăng nhập</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- -------------------------------------------------------------------------------------------- -->
+@* <script src="~/js/book.js"></script> *@
+<script>
+    /*------------- LOGIN --------------*/
+    function showLoginModal() {
+        // Hiển thị modal yêu cầu đăng nhập
+        var modal = new bootstrap.Modal(document.getElementById('loginModal'));
+        modal.show();
+    }
+
+    function redirectToLogin() {
+        var returnUrl = window.location.pathname; // Lưu URL hiện tại
+        window.location.href = '/Identity/Account/Login?returnUrl=' + encodeURIComponent(returnUrl);
+    }
+
+    /*------------- AUDIO --------------*/
+    document.getElementById('play-audio').addEventListener('click', function () {
+        const audioPlayer = document.getElementById('audio-player');
+        audioPlayer.style.display = 'flex';
+    });
+
+    document.getElementById('close-player').addEventListener('click', function () {
+        const audioPlayer = document.getElementById('audio-player');
+        audioPlayer.style.display = 'none';
+        const audio = document.getElementById('audio');
+        audio.pause();
+    });
+</script>
+
+@* ----------- BOOKMARK & NOTE ------------- *@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<script>
+    // Hàm xử lý khi nhấn vào "Đọc ngay"
+    function showBookDetail() {
+        var pdfBookmarkSection = document.getElementById("pdfBookmarkSection");
+        var readButton = document.getElementById("read-button");
+
+        // Kiểm tra xem file PDF đang hiển thị hay không
+        if (pdfBookmarkSection.style.display === "none") {
+            // Hiển thị file PDF
+            pdfBookmarkSection.style.display = "block";
+
+            // Tải PDF nếu chưa được tải
+            if (!pdfBookmarkSection.hasChildNodes()) {
+                loadPDF(pdfUrl); // Hàm loadPDF đã được định nghĩa trước đó
+            }
+
+            // Đổi nút thành "Ẩn"
+            readButton.textContent = "Ẩn";
+        } else {
+            // Ẩn file PDF
+            pdfBookmarkSection.style.display = "none";
+
+            // Đổi nút thành "Đọc ngay"
+            readButton.textContent = "Đọc ngay";
+        }
+    }
+
+    // Khai báo các biến
+    let pdfDoc = null;
+    let currentPage = 1;
+    let totalPages = 0;
+    let isRendering = false;
+    let pageNumPending = null;
+    const bookId = '@Model.Id'; // Mã sách
+
+    // Đường dẫn đến PDF của bạn
+    const pdfUrl = '@Model.pdf';
+
+    // Tải và render PDF
+    function loadPDF(pdfUrl) {
+        // Tải PDF từ URL
+        pdfjsLib.getDocument(pdfUrl).promise.then(function (pdf) {
+            pdfDoc = pdf;
+            totalPages = pdf.numPages;
+            renderPage(currentPage);
+            loadBookmarks(); // Tải danh sách dấu trang đã lưu
+        }).catch(function (error) {
+            console.error('Error loading PDF: ', error);
+        });
+    }
+
+    // Render trang PDF
+    function renderPage(pageNum) {
+        if (isRendering) {
+            pageNumPending = pageNum;
+            return;
+        }
+        isRendering = true;
+
+        pdfDoc.getPage(pageNum).then(function (page) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            const scale = 1.5;
+            const viewport = page.getViewport({ scale: scale });
+
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise.then(function () {
+                document.getElementById('pdfContainer').innerHTML = '';
+                document.getElementById('pdfContainer').appendChild(canvas);
+
+                // Cập nhật số trang hiện tại
+                document.getElementById('currentPage').value = currentPage;
+                // Cập nhật tổng số trang
+                document.getElementById('totalPages').textContent = totalPages;
+
+                isRendering = false;
+                if (pageNumPending !== null) {
+                    renderPage(pageNumPending);
+                    pageNumPending = null;
+                }
+            }).catch(function (error) {
+                console.error("Lỗi khi render trang PDF: ", error);
+            });
+        }).catch(function (error) {
+            console.error("Lỗi khi tải trang từ PDF: ", error);
+        });
+    }
+
+    // Chuyển đến trang tiếp theo
+    function nextPage() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPage(currentPage);
+        }
+    }
+
+    // Chuyển đến trang trước
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage(currentPage);
+        }
+    }
+
+    // Lưu dấu trang
+    function saveBookmark(event) {
+        event.preventDefault(); // Ngừng hành động mặc định của form
+
+        const pageNumber = document.getElementById('currentPage').value;
+        const bookId = document.querySelector('input[name="bookId"]').value;
+        const note = document.getElementById('bookmarkNote').value; // Lấy ghi chú từ form
+        // Lấy số lượng dấu trang hiện tại
+        const bookmarkList = document.getElementById('bookmarkList').getElementsByTagName('li');
+
+        if (bookmarkList.length >= 10) {
+            alert('Bạn đã đánh dấu tối đa 10 trang. Không thể thêm dấu trang mới.');
+            return; // Dừng nếu đã đạt giới hạn
+        }
+        // Kiểm tra nếu ghi chú vượt quá 10 ký tự
+        if (note.length > 50) {
+            alert("Ghi chú không được vượt quá 50 ký tự.");
+            return;
+        }
+
+        // Gửi yêu cầu AJAX để lưu dấu trang
+        fetch('/Bookmark/SetBookmark', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                bookId: bookId,
+                pageNumber: pageNumber,
+                note: note // Gửi ghi chú
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message); // Hiển thị thông báo thành công
+                    loadBookmarks(); // Tải lại danh sách dấu trang
+                } else {
+                    alert(data.message); // Thông báo dấu trang đã tồn tại
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra.');
+            });
+    }
+
+    // Hàm để tải danh sách dấu trang từ backend
+    function loadBookmarks() {
+        const bookId = document.querySelector('input[name="bookId"]').value;
+
+        fetch(`/Bookmark/GetBookmarks?bookId=${bookId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const bookmarkList = data.bookmarks;
+                    const bookmarkContainer = document.getElementById('bookmarkList');
+                    bookmarkContainer.innerHTML = ''; // Xóa danh sách cũ
+
+                    // Hiển thị danh sách dấu trang
+                    bookmarkList.forEach(bookmark => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center', 'bookmark-item');
+                        listItem.innerHTML = `
+                                        <span>Trang ${bookmark.pageNumber}</span>
+                                        <span class="note">${bookmark.note || 'Không có ghi chú'}</span>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteBookmark(${bookmark.pageNumber})">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </button>
+                                    `;
+                        listItem.setAttribute('data-page', bookmark.pageNumber);
+
+                        // Thêm sự kiện click vào mỗi dấu trang
+                        listItem.addEventListener('click', function () {
+                            goToPage(bookmark.pageNumber, bookmark.note); // Chuyển đến trang khi click vào dấu trang
+                        });
+
+                        bookmarkContainer.appendChild(listItem);
+                    });
+
+                    // Cập nhật thông tin số dấu trang
+                    const bookmarkCount = bookmarkList.length;
+                    const totalBookmarks = 10; // Giới hạn tối đa là 10
+                    document.getElementById('bookmarkCount').textContent = `${bookmarkCount}/${totalBookmarks}`;
+                } else {
+                    alert('Không thể tải dấu trang.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra.');
+            });
+    }
+
+    // Hàm chuyển đến trang khi click vào dấu trang
+    function goToPage(pageNumber, note) {
+        currentPage = pageNumber;  // Cập nhật trang hiện tại
+        renderPage(currentPage);   // Render lại trang PDF
+
+        // Cập nhật form ghi chú
+        document.getElementById('currentPage').value = pageNumber;
+        document.getElementById('bookmarkNote').value = note; // Hiển thị ghi chú
+    }
+
+    // Hàm để xóa dấu trang
+    function deleteBookmark(pageNumber) {
+        const bookId = document.querySelector('input[name="bookId"]').value;
+
+        fetch(`/Bookmark/DeleteBookmark?bookId=${bookId}&pageNumber=${pageNumber}`, {
+            method: 'POST',
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showBanner(data.message); // Thông báo thành công
+                    loadBookmarks(); // Tải lại danh sách dấu trang sau khi xóa
+                } else {
+                    showBanner1('Có lỗi xảy ra khi xóa dấu trang.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showBanner1('Có lỗi xảy ra khi xóa dấu trang.');
+            });
+    }
+
+    // Tải PDF ban đầu
+    loadPDF(pdfUrl);
+
+    // Điều khiển chuyển trang
+    document.getElementById('nextButton').addEventListener('click', nextPage);
+    document.getElementById('prevButton').addEventListener('click', prevPage);
+</script>
+
+@* ----------- RATING ----------- *@
+<script>
+    // Hiển thị thông báo đánh giá
+       function showRatingMessage(value) {
+        const messages = ["Dở tệ", "Không hài lòng", "Bình thường", "Hài lòng", "Tuyệt vời"];
+        const stars = document.querySelectorAll(".star");
+
+        // Cập nhật thông báo
+        document.getElementById("rating-message").innerText = messages[value - 1];
+
+        // Tô màu hover cho các ngôi sao
+        stars.forEach((star, index) => {
+            if (index < value) {
+                star.classList.add("hovered");
+            } else {
+                star.classList.remove("hovered");
+            }
+        });
+    }
+
+    // Reset trạng thái hover khi chuột rời khỏi khu vực ngôi sao
+    function resetHover() {
+        const stars = document.querySelectorAll(".star");
+
+        // Xóa màu hover
+        stars.forEach((star) => {
+            star.classList.remove("hovered");
+        });
+
+        // Xóa thông báo
+        document.getElementById("rating-message").innerText = "";
+    }
+
+    // Gửi đánh giá bằng cách cập nhật giá trị sao đã chọn
+    function submitRating(value) {
+        // Cập nhật giá trị cho input hidden
+        document.getElementById("star-value").value = value;
+
+        // Tô màu cố định cho các ngôi sao đã chọn
+        const stars = document.querySelectorAll(".star");
+        stars.forEach((star, index) => {
+            if (index < value) {
+                star.classList.add("selected");
+            } else {
+                star.classList.remove("selected");
+            }
+        });
+    }
+
+    // Hiển thị banner thông báo thành công
+
+    // Kiểm tra trước khi gửi form
+    document.querySelector("#rating-form").addEventListener("submit", function (e) {
+        const starValue = document.getElementById("star-value").value;
+        if (starValue === "0" || starValue === "") {
+            e.preventDefault(); // Ngăn gửi form nếu chưa chọn sao
+            showBanner("Bạn cần chọn ít nhất 1 sao trước khi gửi đánh giá.");
+        } else {
+            showBanner(`Cảm ơn bạn đã chọn ${starValue} sao cho TVQ Books.`);
+        }
+    });
+</script>
+
+@* ----------- COMMENT - Replies ----------- *@
+<script>
+    function timeAgo(dateString) {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {  // Kiểm tra giá trị thời gian hợp lệ
+            return "Thời gian không hợp lệ";
+        }
+
+        const now = new Date();
+        const difference = Math.floor((now - date) / 1000);
+
+        if (difference < 60) return `${difference} giây trước`;
+        if (difference < 3600) return `${Math.floor(difference / 60)} phút trước`;
+        if (difference < 86400) return `${Math.floor(difference / 3600)} giờ trước`;
+        if (difference < 604800) return `${Math.floor(difference / 86400)} ngày trước`;
+        if (difference < 2592000) return `${Math.floor(difference / 604800)} tuần trước`;
+        if (difference < 31536000) return `${Math.floor(difference / 2592000)} tháng trước`;
+
+        return `${Math.floor(difference / 31536000)} năm trước`;
+    }
+        document.querySelectorAll('.comment-time').forEach(el => {
+        const time = el.getAttribute('data-time');
+        el.textContent = timeAgo(time);
+    });
+
+    // Thay đổi nội dung thời gian động
+    document.addEventListener('DOMContentLoaded', function () {
+        const replyButtons = document.querySelectorAll('.reply-button');
+
+        // Kiểm tra nếu có replyButton
+        if (replyButtons.length > 0) {
+            replyButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const commentId = button.getAttribute('data-comment-id');
+                    const replyForm = document.getElementById('reply-form-' + commentId);
+                    // Toggle the visibility of the reply form
+                    if (replyForm.style.display === 'none' || replyForm.style.display === '') {
+                        replyForm.style.display = 'block';
+                    } else {
+                        replyForm.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const textarea = document.getElementById("commentContent");
+        const submitBtn = document.getElementById("submitBtn");
+
+        if (textarea && submitBtn) {  // Kiểm tra sự tồn tại của textarea và submitBtn
+            textarea.addEventListener("input", function () {
+                if (textarea.value.trim() !== "") {
+                    submitBtn.disabled = false;
+                } else {
+                    submitBtn.disabled = true;
+                }
+            });
+        }
+    });
+
+    function updateCartOnBuyNow(event, productId) {
+        event.preventDefault();  // Ngăn chặn hành động mặc định của thẻ <a>
+
+        // Thực hiện thêm sản phẩm vào giỏ hàng
+        console.log("Thêm sản phẩm vào giỏ hàng với ID: " + productId);
+        // Bạn có thể thêm logic xử lý giỏ hàng ở đây
+    }
+</script>
+
+@* ----------- CART ----------- *@
+<script>
+      function updateCartOnBuyNow(productId) {
+        event.preventDefault(); // Ngăn chặn hành động mặc định của thẻ a
+
+        // Thực hiện gọi AJAX để thêm sản phẩm vào giỏ hàng
+        fetch(`/ShoppingCart/AddToCart?id=${productId}`)
+            .then(response => {
+                if (!response.ok) {
+                    // Nếu server trả về lỗi, lấy thông báo lỗi từ server
+                    return response.text().then(errorMessage => {
+                        throw new Error(errorMessage);
+                    });
+                }
+                return response.text();
+            })
+            .then(() => {
+                // Sau khi thêm sản phẩm thành công, chuyển hướng đến trang giỏ hàng
+                window.location.href = '/ShoppingCart/Index';
+            })
+            .catch(error => {
+                // Hiển thị banner nếu xảy ra lỗi
+                showBanner1(error.message);
+            });
+    }
+
+
+    function addToCartWithBanner(productId) {
+        // Gửi yêu cầu AJAX thêm sản phẩm vào giỏ hàng
+        fetch(`/ShoppingCart/AddToCart?id=${productId}`)
+            .then(response => {
+                if (!response.ok) {
+                        showBanner1('Không thể thêm sản phẩm vào giỏ hàng!');
+                }
+            })
+
+            .then(() => {
+                // Hiển thị banner thông báo
+                showBanner("Sản phẩm đã được thêm vào giỏ hàng");
+                                        window.location.reload();
+
+                // Cập nhật giỏ hàng nếu cần (tùy bạn có muốn tải lại giỏ hàng không)
+            })
+            .catch(error => {
+                showBanner1(error.message);
+            });
+    }
+
+    function showBanner(message) {
+        // Tạo banner
+        const banner = document.createElement("div");
+        banner.id = "success-banner";
+        banner.style.position = "fixed";
+        banner.style.top = "20%";
+        banner.style.left = "50%";
+        banner.style.transform = "translate(-50%, -50%)";
+        banner.style.backgroundColor = "#28a745";
+        banner.style.color = "white";
+        banner.style.padding = "20px";
+        banner.style.borderRadius = "8px";
+        banner.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+        banner.style.zIndex = "1000";
+        banner.innerHTML = `
+                <i class="fa fa-check-circle" style="margin-right: 8px;"></i>${message}
+            `;
+
+        // Thêm banner vào DOM
+        document.body.appendChild(banner);
+
+        // Tự động ẩn sau 3 giây
+        setTimeout(() => {
+
+            banner.remove();
+        }, 4000);
+    }
+
+        function showBanner1(message) {
+            // Tạo banner
+            const banner = document.createElement("div");
+            banner.id = "success-banner";
+            banner.style.position = "fixed";
+            banner.style.top = "20%";
+            banner.style.left = "50%";
+            banner.style.transform = "translate(-50%, -50%)";
+            banner.style.backgroundColor = "#dc3545";
+            banner.style.color = "white";
+            banner.style.padding = "20px";
+            banner.style.borderRadius = "8px";
+            banner.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+            banner.style.zIndex = "1000";
+            banner.innerHTML = `
+                   
+    <i class="fa-solid fa-circle-xmark" style="margin-right: 8px;"></i>${message}
+                `;
+
+            // Thêm banner vào DOM
+            document.body.appendChild(banner);
+
+            // Tự động ẩn sau 3 giây
+            setTimeout(() => {
+                window.location.reload();
+                banner.remove();
+            }, 2000);
+        }
+</script>

@@ -1,0 +1,294 @@
+﻿@model IEnumerable<BookWeb.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    var carts = Model as List<CartItem>;
+    bool isCartEmpty = ViewBag.IsCartEmpty ?? !carts.Any();
+}
+
+<link rel="stylesheet" href="~/css/shopping-cart.css">
+
+<div class="row">
+    @if (isCartEmpty)
+    {
+        <!-- Giao diện khi giỏ hàng trống -->
+        <div class="text-center my-5">
+            <img src="~/images/empty-cart.png" alt="Giỏ hàng trống" style="width: 150px; height: 150px;margin-left: 65px;" />
+            <h4 class="mt-3">Chưa có sản phẩm trong giỏ hàng của bạn.</h4>
+            <a href="/" class="btn btn-primary mt-3">Mua sắm ngay</a>
+        </div>
+    }
+    else
+    {
+        <div id="cart" class="card-block show p-0 col-12">
+            <div class="row align-item-center">
+                <div class="col-lg-8">
+                    <div class="iq-card">
+                        <div class="iq-card-header d-flex justify-content-between iq-border-bottom mb-0">
+                            <div class="d-flex align-items-center">
+                                <a id="place-order" asp-controller="Home" asp-action="Index" class="me-2">
+                                    <i class="fa fa-arrow-left"></i>
+                                </a>
+                                <h4 class="card-title mb-0">Giỏ hàng (<span>@Model.Count()</span> sản phẩm)</h4>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-center py-2 border-bottom">
+                            <!-- Cột checkbox "Chọn tất cả" -->
+                            <div class="col-md-6 d-flex align-items-center" style="margin-left:22px;">
+                                <input type="checkbox" id="select-all" onclick="toggleSelectAll()" class="mr-2 apple">
+                                <label for="select-all">Chọn tất cả (<span>@Model.Count()</span> sản phẩm)</label>
+                            </div>
+                            <div class="col-sm-6" style="display:flex; margin-right:-22px;">
+                                <!-- Cột số lượng -->
+                                <div class="col-sm-4" style="margin-left:-25px;">
+                                    <strong>Số lượng</strong>
+                                </div>
+                                <!-- Cột thành tiền -->
+                                <div class="col-sm-4" style="margin-left:-24px;">
+                                    <strong>Thành tiền</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="iq-card-body">
+                            <ul class="list-group">
+                                @foreach (var item in Model)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="row align-items-center">
+                                            <input type="hide" style="display: none;" class="item-checkbox apple" onchange="updateCheckboxState(this)" data-id="@item.Id" />
+                                            <!-- Hình ảnh sản phẩm -->
+                                            <div class="col-sm-2">
+                                                <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id">
+                                                    <img src="~/images/@item.Image" alt="@item.Name" class="img-fluid rounded">
+                                                </a>
+                                            </div>
+                                            <!-- Thông tin sản phẩm -->
+                                            <div class="col-sm-4" style="padding-right:62px;">
+                                                <h5>@item.Name</h5>
+                                                <div class="text-muted">
+                                                    Giá: <span class="font-weight-bold text-primary">@string.Format("{0:0,0} đ", item.Price)</span>
+                                                </div>
+                                                <p>Số lượng tồn kho: <strong>@item.StockQuantity</strong></p>
+                                            </div>
+                                            <!-- Số lượng và thành tiền -->
+                                            <div class="col-sm-6" style="margin-left:-25px">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-4">
+                                                        <div class="quantity-control d-flex align-items-center">
+                                                            <button class="btn btn-light btn-minus" onclick="decreaseQuantity('@item.Id')">-</button>
+                                                            <input id="txtQuantity_@item.Id"
+                                                            class="form-control text-center quantity-input"
+                                                            type="text"
+                                                            max="@item.StockQuantity"
+                                                            value="@item.Quantity"
+                                                            onchange="updateCart('@item.Id')">
+                                                            <button class="btn btn-light btn-plus" onclick="increaseQuantity('@item.Id')">+</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <span class="font-weight-bold text-danger">
+                                                            @string.Format("{0:0,0} đ", item.Price * item.Quantity)
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-sm-4 text-right">
+                                                        <a asp-action="DeleteCart"
+                                                        asp-route-id="@item.Id"
+                                                        class="btn btn-link text-danger">
+                                                            <i class="fa-solid fa-trash"></i> Xóa
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="iq-card">
+                        <div class="iq-card-body">
+                            <p>Tùy chọn</p>
+                            <div class="d-flex justify-content-between">
+                                <span>Phiếu giảm giá</span>
+                                <span><a href="#"><strong>Áp dụng</strong></a></span>
+                            </div>
+                            <hr>
+                            <p><b>Chi tiết</b></p>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Tổng</span>
+                                <span id="total-price"> @String.Format(format, "{0:c0}", ViewBag.TongTien) đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Giảm giá</span>
+                                <span class="text-success">0đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Thuế VAT</span>
+                                <span>0đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Phí vận chuyển</span>
+                                <span class="text-success">Miễn phí</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-dark"><strong>Tổng</strong></span>
+                                <span id="final-total-price" class="text-dark"><strong> @String.Format(format, "{0:c0}", ViewBag.TongTien) đ</strong></span>
+                            </div>
+                            @if (!User.Identity.IsAuthenticated)
+                            {
+                                <button id="place-order" class="btn btn-primary d-block mt-3 next" onclick="showLoginModal()" style="width: 100%;">Đặt hàng</button>
+                            }
+                        </div>
+                    </div>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="iq-card ">
+                            <div class="iq-card-header d-flex justify-content-between iq-border-bottom mb-0">
+                                <div class="d-flex align-items-center">
+                                    <h4 class="card-title mb-0">ĐỊA CHỈ GIAO HÀNG</h4>
+                                </div>
+                                <!-- Thêm class ml-auto để đẩy nút ra phía phải -->
+                                <a asp-area="Identity" asp-page="/Account/Manage/Index" class="ml-auto">Đổi địa chỉ</a>
+                            </div>                        
+                            <div class="iq-card-body">
+                                @if (string.IsNullOrEmpty(ViewData["FullName"] as string) ||
+                                    string.IsNullOrEmpty(ViewData["PhoneNumber"] as string) ||
+                                    string.IsNullOrEmpty(ViewData["Address"] as string))
+                                {
+                                    <div class="alert alert-warning">
+                                        Vui lòng cập nhật đầy đủ thông tin cá nhân trước khi đặt hàng.
+                                        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-warning btn-sm">Cập nhật ngay</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!-- Form thanh toán COD -->
+                                    <form asp-action="Checkout" method="post" id="checkoutForm">
+                                        <div class="form-group">
+                                            <label>Họ và tên người nhận</label>
+                                            <input type="text" class="form-control" value="@ViewBag.FullName" name="Name" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Số điện thoại</label>
+                                            <input type="tel" class="form-control" value="@ViewBag.PhoneNumber" name="PhoneNumber" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Địa chỉ giao hàng</label>
+                                            <input type="text" class="form-control" value="@ViewBag.Address" name="ShippingAddress" readonly>
+                                        </div>
+                                        <button onclick="validateOrder(event, 'cod')" type="submit" class="btn btn-success d-block mt-3 next ok1" style="width: 100%;">Thanh toán khi nhận hàng (COD)</button>
+                                    </form>
+                                    @* 30/11 - MOMO - id="momo-total-price "*@
+                                    <form method="POST" asp-action="CreatePaymentMomo" asp-controller="ShoppingCart" id="momoPaymentForm">
+                                        <input type="hidden" name="FullName" value="@User.Identity.Name" />
+                                        <input type="hidden" name="Amount" value="@ViewBag.TotalAmount" />
+                                        <input type="hidden" name="OrderInfo" value="Thanh toán qua Momo" />
+                                        <button onclick="validateOrder(event, 'momo')" class="btn " name="PayUrl" type="submit" style="display:flex; width: 100%; background-color:#ae2070; margin-top: .75rem; justify-content: center; ">
+                                            <img src="~/images/momo.png" style="min-width: 1.75rem;height: 1.75rem;" /> <h4 style="margin-left: .5rem; margin-top: 2px; color:white;">
+                                                Thanh toán với MoMo
+                                            </h4>
+                                        </button>
+                                    </form>
+                                }
+                            </div>                       
+                        </div>
+                    }
+
+                    <div class="iq-card ">
+                        <div class="card-body iq-card-body p-0 iq-checkout-policy">
+                            <ul class="p-0 m-0">
+                                <li class="d-flex align-items-center">
+                                    <div class="iq-checkout-icon">
+                                        <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <h6>Chính sách bảo mật (Thanh toán an toàn và bảo mật.)</h6>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <div class="iq-checkout-icon">
+                                        <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <h6>Chính sách giao hàng (Giao hàng tận nhà.)</h6>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <div class="iq-checkout-icon">
+                                        <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <h6>Chính sách hoàn trả</h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal xác nhận -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h3 class="modal-title" id="loginModalLabel" style="font-weight: bold; font-size: 1.5rem;">Yêu cầu đăng nhập </h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="lead">Bạn cần đăng nhập để thực hiện tính năng này.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="redirectToLogin()">Đăng nhập</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận đơn hàng -->
+<div class="modal fade" id="orderConfirmationModal" tabindex="-1" aria-labelledby="orderConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content shadow-lg rounded">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="orderConfirmationModalLabel">Xác nhận đơn hàng</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" onclick="hideModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6 class="text-primary">Thông tin sản phẩm:</h6>
+                <ul id="order-items-list" class="list-group mb-3"></ul>
+
+                <h6 class="text-primary">Thông tin giao hàng:</h6>
+                <pre id="shipping-info" class="bg-light p-2 rounded"></pre>
+
+                <h6 class="text-primary">Tổng cộng:</h6>
+                <p id="final-total-price-modal" class="font-weight-bold text-danger"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideModal()">Hủy</button>
+                <button type="button" class="btn btn-success" id="confirmBtn" onclick="confirmOrder()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="~/js/shopping-cart.js"></script>
+    <script>
+        function showLoginModal() {
+        // Hiển thị modal yêu cầu đăng nhập
+        var modal = new bootstrap.Modal(document.getElementById('loginModal'));
+        modal.show();
+    }
+</script>

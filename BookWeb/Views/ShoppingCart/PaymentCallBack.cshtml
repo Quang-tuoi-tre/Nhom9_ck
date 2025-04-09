@@ -1,0 +1,24 @@
+﻿@using BookWeb.Models.Momo
+@model MomoExecuteResponseModel
+
+@{   
+    ViewData["Title"] = "Kết quả thành công!";
+}
+
+<link rel="stylesheet" href="~/css/shopping-cart.css">
+
+<div class="container">
+    <h2>Đặt Hàng Thành Công</h2>
+
+    <div class="info">
+        <h4>Thông tin đơn hàng:</h4>
+        <p><strong>Họ và tên người nhận:</strong> @Model.FullName</p>
+        <p><strong>Thông tin đơn hàng:</strong> @Model.OrderInfo</p>
+        <p><strong>Số tiền thanh toán:</strong> @string.Format("{0:N0} VND", Model.Amount)</p>
+    </div>
+
+    <div class="text-center">
+        <a href="@Url.Action("Index", "Home")" class="button">Về trang chủ <i class="fas fa-home"></i></a>
+        <a href="@Url.Action("OrderDetails", "ShoppingCart", new { id = Model.OrderId })" class="button" style="margin-left: 15px;">Xem chi tiết đơn hàng <i class="fas fa-info-circle"></i></a>
+    </div>
+</div>

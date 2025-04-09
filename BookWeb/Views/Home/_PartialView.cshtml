@@ -1,0 +1,117 @@
+﻿@using BookWeb.ViewModel
+@model HomeViewModel
+
+@{
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    int indexView = Model.StartIndexViewed + 1;
+}
+
+<div id="topViewed" data-current-group-viewed="@Model.CurrentGroupViewed" data-total-groups-viewed="@Model.TotalGroupsViewed">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height topViewed">
+        <div class="iq-card-header d-flex justify-content-between align-items-center position-relative">
+            <div class="iq-header-title">
+                <h4 class="card-title mb-0">Top Lượt Xem</h4>
+            </div>
+        </div>
+
+        <div class="iq-card-body">
+            <!-- Container cho nút điều hướng và lưới sách -->
+            <div class="books-container d-flex align-items-center justify-content-between">
+                <!-- Nút Previous -->
+                @if (Model.CurrentGroupViewed > 1)
+                {
+                    <a href="javascript:void(0);" id="prev-btn-viewed" class="previous round">&#8249;</a>
+                }
+                else
+                {
+                    <span class="previous round disabled">&#8249;</span>
+                }
+
+                <!-- Lưới hiển thị sách -->
+                <div class="grid books-grid">
+                    @foreach (var item in Model.TopBooksViewed)
+                    {
+                        <div class="bg-card p-4 rounded-lg shadow-md cate-img" style="max-width:300px;">
+                            <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id">
+                                <div class="relative">
+                                    <img src="~/images/@item.ImageUrl" alt="@item.Name" class="cate-img1 w-full h-48 object-contain mb-2" />
+                                    <span class="absolute bottom-2 left-2 highlight-index font-bold">
+                                        @indexView
+                                    </span>
+                                </div>
+                                <h3 class="font-bold">@item.Name</h3>
+                            </a>
+                            <span class="text-red-500 font-bold">
+                                @(item.Price > 0 ? String.Format(format, "{0:c0}", item.Price) : "Miễn phí")
+                                <span class="text-gray-500 mt-2">
+                                    (<i class="fa fa-eye text-muted mr-1">
+                                    </i>@item.ViewCount)
+                                </span>
+                            </span>
+                        </div>
+                        indexView++;
+                    }
+                </div>
+
+                <!-- Nút Next -->
+                @if (Model.CurrentGroupViewed < Model.TotalGroupsViewed)
+                {
+                    <a href="javascript:void(0);" id="next-btn-viewed" class="next round">&#8250;</a>
+                }
+                else
+                {
+                    <span class="next round disabled">&#8250;</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK" crossorigin="anonymous"></script> *@
+@* <script src="~/js/home.js"></script> *@
+
+<script>
+    $(document).ready(function () {
+        let currentGroupViewed = @Model.CurrentGroupViewed;
+        const totalGroupsViewed = @Model.TotalGroupsViewed;
+
+        // Hàm tải danh sách sách đã xem
+        function loadViewed(group) {
+            $.ajax({
+                url: `/Home/LoadViewed?currentGroupTopViewed=${group}`,
+                type: "GET",
+                success: function (result) {
+                    $("#topViewed").html(result);  // Cập nhật lại nội dung phần sách đã xem
+                    currentGroupViewed = group;  // Cập nhật nhóm hiện tại
+                    toggleButtons();  // Cập nhật trạng thái các nút chuyển trang
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading viewed:", error);
+                }
+            });
+        }
+
+        // Cập nhật trạng thái các nút Next và Previous cho Top Viewed
+        function toggleButtons() {
+            $("#prev-btn-viewed").toggleClass("disabled", currentGroupViewed <= 1);
+            $("#next-btn-viewed").toggleClass("disabled", currentGroupViewed >= totalGroupsViewed);
+        }
+
+        // Khi nhấn nút Previous cho Top Viewed
+        $("#prev-btn-viewed").click(function () {
+            if (currentGroupViewed > 1) {
+                loadViewed(currentGroupViewed - 1);
+            }
+        });
+
+        // Khi nhấn nút Next cho Top Viewed
+        $("#next-btn-viewed").click(function () {
+            if (currentGroupViewed < totalGroupsViewed) {
+                loadViewed(currentGroupViewed + 1);
+            }
+        });
+
+        // Cập nhật trạng thái các nút ngay từ đầu khi trang được tải
+        toggleButtons();
+    });
+</script>

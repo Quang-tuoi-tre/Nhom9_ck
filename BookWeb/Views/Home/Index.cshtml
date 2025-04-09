@@ -1,0 +1,101 @@
+﻿@using Newtonsoft.Json
+@model BookWeb.ViewModel.HomeViewModel;
+
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    int indexFavorite = Model.StartIndexFavorites + 1;
+    int indexView = Model.StartIndexViewed + 1;
+}
+
+<link rel="stylesheet" href="~/css/banner.css">
+<link rel="stylesheet" href="~/css/home.css">
+
+<!-- Page Content  -->
+<!-- BANNER -------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="container1">
+    <div class="ribbon-wrapper">
+        <div class="ribbon">Bán Chạy</div>
+    </div>
+
+    <div class="slide">
+        @foreach (var item in Model.TopBooksSelling.Take(6))
+        {
+            <div class="item" data-title="@item.Name" data-price="@item.Price">
+                <img style="height:100%" src="~/images/@item.ImageUrl" alt="Book Cover" class="book-image" />
+                <div class="book-info">
+                    <h3 class="book-title" id="book-title">@item.Name</h3>
+                    <p class="book-price" id="book-price">@(item.Price > 0 ? String.Format(format, "{0:c0}", item.Price) : "Miễn phí")</p>
+                </div>
+                <div class="content">
+                    <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-success">Xem Chi Tiết</a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="button1">
+        <button class="prev"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="next"><i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+</div>
+
+</div>
+<div class="col-lg-12">
+    <p class="">
+        <br />
+    </p>
+</div>
+
+<!-- NEW-EST ------------------------------------------------------------------------------------------------------------------------------------------------------------>
+<div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-header d-flex justify-content-between align-items-center position-relative">
+            <div class="iq-header-title">
+                <h4 class="card-title mb-0"> Sách mới nhất </h4>
+            </div>
+            <div class="iq-card-header-toolbar d-flex align-items-center">
+                <a asp-controller="Books" asp-action="Index" class="btn btn-sm btn-primary view-more" style="color: #301616; font-weight: bold;">Xem Thêm</a>
+            </div>
+        </div>
+
+        <div class="iq-card-body">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                @foreach (var item in Model.Books)
+                {
+                    <div class="bg-card p-4 rounded-lg shadow-md cate-img flex flex-col items-center text-center">
+                        <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Id">
+                            <img src="~/images/@item.ImageUrl" alt="Book Cover" class="cate-img1 w-full h-48 object-contain mb-2" />
+
+                            <h3 class="font-bold">@item.Name</h3>
+                        </a>
+                        <span class="text-red-500 font-bold">
+                            @(item.Price > 0 ? String.Format(format, "{0:c0}", item.Price) : "Miễn phí")
+                            <span class="text-gray-500 mt-2">
+                                (@item.AverageRating.ToString("0.0")
+                                <i class="fa fa-star text-warning ms-0"></i>)
+                            </span>  
+                        </span>                         
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Favorites -------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div id="topFavorited" data-current-group-favorites="@Model.CurrentGroupFavorites" data-total-groups-favorites="@Model.TotalGroupsFavorites">
+    @await Html.PartialAsync("_TopBooksPartial", Model)
+</div>
+
+<!--Top View -------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div id="topViewed" data-current-group-viewed="@Model.CurrentGroupViewed" data-total-groups-viewed="@Model.TotalGroupsViewed">
+    @await Html.PartialAsync("_PartialView", Model)
+</div>
+
+<!--------------------------------------------------------------------->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK" crossorigin="anonymous"></script>
+<script src="~/js/home.js"></script>
+
+@* @section Scripts {
+} *@
