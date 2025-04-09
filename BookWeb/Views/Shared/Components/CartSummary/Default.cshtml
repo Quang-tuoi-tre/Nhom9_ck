@@ -1,0 +1,12 @@
+﻿@using BookWeb.Models
+@model CartSummaryViewModel
+
+@* <link rel="stylesheet" href="~/css/layout.css"> *@
+
+<div class="cart-wrapper">
+    <img class="cart-icon" src="~/images/ShoppingCart.png" alt="No Image" width="40px" height="40px">
+    @if (Model.NumberOfItems > 0)
+    {
+        <span class="jbrHBQ">@Model.NumberOfItems</span>
+    }
+</div>

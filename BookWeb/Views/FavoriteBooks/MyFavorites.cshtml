@@ -1,0 +1,132 @@
+﻿@model List<BookWeb.Models.Book>
+
+@{
+    ViewData["Title"] = "Favorite Books";
+}
+
+<link rel="stylesheet" href="~/css/layout-partial.css">
+
+
+<div class="container">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 sidebar">
+            <div class="user-info ml-2 mb-2" style="display:flex;">
+                <img src="/images/logo.png" alt="Avatar" class="img-thumbnail" style=" max-height: 380px; width: 330px;margin-right: 8px;" />
+            </div>
+
+            <div class="list-group">
+                <a asp-area="Identity" asp-page="/Account/Manage/Index" class="list-group-item list-group-item-action sidebar-item">
+                    <i class="fas fa-user-circle"></i> Thông tin tài khoản
+                </a>
+                <a asp-area="" asp-controller="FavoriteBooks" asp-action="MyFavorites" class="list-group-item list-group-item-action sidebar-item active">
+                    <i class="fas fa-heart"></i> Tủ sách của tôi
+                </a>
+                <a asp-area="" asp-controller="ShoppingCart" asp-action="OrderHistory" class="list-group-item list-group-item-action sidebar-item">
+                    <i class="fas fa-shopping-cart"></i> Đơn hàng
+                </a>
+            </div>
+        </div>
+
+        <!-- Profile form -->
+        <div class="col-md-9">
+            <div class="favorite-book-container">
+                <div class="list-group">
+                    <div class="list-group-item d-flex">
+                        <!-- "Sách yêu thích" Link with hover effect -->
+                        <div>
+                            <a asp-area="" asp-controller="FavoriteBooks" asp-action="MyFavorites" class="favorite-book-link sach-yeu-thich active">
+                                <i class="fas fa-heart"></i> 
+                                <strong>Sách yêu thích</strong>
+                            </a>
+                        </div>
+
+                        <!-- "Sách đánh dấu" Link with hover effect -->
+                        <div>
+                            <a asp-area="" asp-controller="Bookmark" asp-action="BooksWithBookmarks" class="favorite-book-link sach-danh-dau">
+                                <i class="fa-solid fa-bookmark"></i>
+                                <strong>Sách đánh dấu</strong>
+                            </a>
+                        </div>
+
+                        <!-- "Sách đánh dấu" Link with hover effect -->
+                        <div class="ms-auto">
+                            <p class="title-style">
+                                <i class="fas fa-heart"></i> 
+                                <strong>Sách yêu thích</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content form -->
+            <div class="favorite-book-container">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="row">
+                        @foreach (var book in Model)
+                        {
+                            <div class="col-md-3 mb-4">
+                                <div class="card shadow border-light rounded card-container">
+                                    <img src="/images/@book.ImageUrl" class="card-img-top" alt="@book.Name" />
+                                    <div class="card-overlay"></div> <!-- Dark overlay for dimming effect -->
+
+                                    <div class="card-body">
+                                        @* <h5 class="card-title text-dark" style="color: red">@book.Name</h5> *@
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <a asp-controller="Books" asp-action="Details" asp-route-id="@book.Id" class="btn btn btn-danger btn-sm">Xem chi tiết</a>
+                                            <form asp-controller="FavoriteBooks" asp-action="RemoveFromMyFavorites" method="post" class="d-inline">
+                                                <input type="hidden" name="bookId" value="@book.Id" />
+                                                <button type="submit" class="btn btn-info btn-sm">Bỏ thích</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Pagination -->                    
+                    <div class="d-flex justify-content-center mt-4">
+                        @if (ViewBag.TotalPages > 1)
+                        {
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    @if (ViewBag.CurrentPage > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("MyFavorites", new { pageNumber = ViewBag.CurrentPage - 1 })" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @for (var i = 1; i <= ViewBag.TotalPages; i++)
+                                    {
+                                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                            <a class="page-link" href="@Url.Action("MyFavorites", new { pageNumber = i })">@i</a>
+                                        </li>
+                                    }
+
+                                    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("MyFavorites", new { pageNumber = ViewBag.CurrentPage + 1 })" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-center text-warning"><strong>Bạn chưa thêm sách nào vào danh sách yêu thích.</strong></p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

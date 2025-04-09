@@ -1,0 +1,147 @@
+﻿@using BookWeb.Models
+@using System.Security.Claims
+@model Order
+
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<link rel="stylesheet" href="~/css/shopping-cart.css">
+
+<div id="cart" class="card-block show p-0 col-12">
+    <div class="row align-item-center">
+        <div class="col-lg-8">
+            <div class="iq-card">
+                <div class="iq-card-header d-flex justify-content-between iq-border-bottom mb-0">
+                    <div class="d-flex align-items-center">
+                        <a id="place-order" asp-action="Index" class="me-2">
+                            <i class="fa fa-arrow-left"></i>
+                        </a>
+                        <h4 class="card-title mb-0">ĐỊA CHỈ GIAO HÀNG</h4>
+                    </div>
+                </div>
+
+                <div class="iq-card-body">
+                    @if (string.IsNullOrEmpty(ViewData["FullName"] as string) ||
+                    string.IsNullOrEmpty(ViewData["PhoneNumber"] as string) ||
+                    string.IsNullOrEmpty(ViewData["Address"] as string))
+                    {
+                        <div class="alert alert-warning">
+                            Vui lòng cập nhật đầy đủ thông tin cá nhân trước khi đặt hàng.
+                            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-warning btn-sm">Cập nhật ngay</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="Checkout" method="post">
+                            <div class="form-group">
+                                <label>Họ và tên người nhận</label>
+                                <input type="text" class="form-control" value="@ViewBag.FullName" name="Name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="tel" class="form-control" value="@ViewBag.PhoneNumber" name="PhoneNumber" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Địa chỉ giao hàng</label>
+                                <input type="text" class="form-control" value="@ViewBag.Address" name="ShippingAddress" readonly>
+                            </div>
+
+                            @* <div class="form-group">
+                                <label asp-for="Notes">Ghi chú</label>
+                                <input asp-for="Notes" type="tel" class="form-control" id="Notes">
+                            </div> *@
+
+                                <button type="submit" class="btn butan1 mt-3 ok1">Thanh toán khi nhận hàng (COD)</button>
+                        </form>
+
+                    @* 30/11 - MOMO *@
+                    <form method="POST" asp-action="CreatePaymentMomo" asp-controller="ShoppingCart">
+                        <input type="hidden" name="FullName" value="@User.Identity.Name" />
+                        <input type="hidden" name="Amount" value="@ViewBag.TotalAmount" />
+                        <input type="hidden" name="OrderInfo" value="Thanh toán qua Momo" />
+                        <button class="btn " name="PayUrl" type="submit" style="display:flex;  background-color:#ae2070; margin-top: .75rem; justify-content: center; ">
+                            <img src="~/images/momo.png" style="min-width: 1.75rem;height: 1.75rem;" /> <h4 style="margin-left: .5rem; margin-top: 2px; color:white;">
+                                Pay with MoMo
+                            </h4>
+                        </button>
+                    </form>
+
+                        @* 01/12 - VNPAY *@
+                        @* <form method="POST" action="/ShoppingCart/CreatePaymentUrlVnpay">
+                        <input type="hidden" name="Name" value="@User.Identity.Name" />
+                        <input type="hidden" name="Amount" value="@ViewBag.TotalAmount" />
+                        <input type="hidden" name="OrderType" value="other" />
+                        <input type="hidden" name="OrderDescription" value="Thanh toán qua VNPAY" />
+                        <button class="btn btn-success" type="submit">Pay with Vnpay</button>
+                    </form> *@
+
+                        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-warning btn-sm">Thay đổi địa chỉ</a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="iq-card">
+                <div class="iq-card-body">
+                    <p>Tùy chọn</p>
+                    <div class="d-flex justify-content-between">
+                        <span>Phiếu giảm giá</span>
+                        <span><a href="#"><strong>Áp dụng</strong></a></span>
+                    </div>
+                    <hr>
+                    <p><b>Chi tiết</b></p>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Tổng</span>
+                        <span id="total-price"> @String.Format(format, "{0:c0}", ViewBag.TotalAmount) đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Giảm giá</span>
+                        <span class="text-success">0đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Thuế VAT</span>
+                        <span>0đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Phí vận chuyển</span>
+                        <span class="text-success">Miễn phí</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-dark"><strong>Tổng</strong></span>
+                        <span id="final-total-price" class="text-dark"><strong> @String.Format(format, "{0:c0}", ViewBag.TotalAmount) đ</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="iq-card ">
+                <div class="card-body iq-card-body p-0 iq-checkout-policy">
+                    <ul class="p-0 m-0">
+                        <li class="d-flex align-items-center">
+                            <div class="iq-checkout-icon">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <h6>Chính sách bảo mật (Thanh toán an toàn và bảo mật.)</h6>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <div class="iq-checkout-icon">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <h6>Chính sách giao hàng (Giao hàng tận nhà.)</h6>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <div class="iq-checkout-icon">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <h6>Chính sách hoàn trả</h6>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

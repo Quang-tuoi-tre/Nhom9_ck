@@ -1,0 +1,231 @@
+﻿@{
+    bool isAdmin = User.IsInRole("admin");
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TVQ BOOKS - Nhà sách trực tuyến</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/images/favicon.ico" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <!-- Typography CSS -->
+    <link rel="stylesheet" href="~/css/typography.css">
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="~/css/style.css">
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="~/css/responsive.css">
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="~/fontawesome/css/all.min.css">
+    <!-- Font Banner -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="shortcut icon" href="~/images/logo.png" />
+    <link rel="stylesheet" href="~/css/layout.css">
+
+</head>
+
+<body>
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <div class="iq-sidebar">
+            <div id="sidebar-scrollbar">
+                <nav class="iq-sidebar-menu">
+                    <ul id="iq-sidebar-toggle" class="iq-menu">
+                        <li class=" active-menu">
+                            <a data-toggle="collapse" aria-expanded="true" asp-area="" asp-controller="Home" asp-action="Index">
+                                <div class="gat">
+                                    <img src="/images/logo.png" alt="" srcset="" class="img-fluid" style="width: 80px;height: 71px;">
+                                    <h4 style="margin-left:5px; margin-top:20px;font-weight: bold;" class="mb-0">TVQ BOOKS</h4>
+                                </div>
+                            </a>
+                            <a class="iq-waves-effect" data-toggle="collapse" aria-expanded="true" asp-area="" asp-controller="Home" asp-action="Index"><span class="ripple rippleEffect"></span><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+                            <ul id="dashboard" class="iq-submenu collapse show" data-parent="#iq-sidebar-toggle">
+                            </ul>
+                        </li>
+
+                        <li>
+                            <div class="ok">
+                                <a asp-area="" asp-controller="Books" asp-action="Index" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="fa-solid fa-book"></i><span>Danh mục sách</span></a>
+
+                                <i class="fa-solid fa-plus iconed toggle-icon" id="plus-icon" style="display: none;"></i>
+                                <i class="fa-solid fa-minus iconed toggle-icon" id="minus-icon"></i>
+                            </div>
+                            <ul class="some show">
+                                <li class="elements">
+                                    <a asp-area="" asp-controller="Categories" asp-action="ForeignLanguageTopic" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="fa-solid fa-earth-asia"></i><span>Ngoại ngữ</span></a>
+                                </li>
+                                <li class="elements">
+                                    <a asp-area="" asp-controller="Categories" asp-action="TechnologyTopic" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="fa-solid fa-flask"></i><span>Khoa Học - Kỹ Thuật</span></a>
+                                </li>
+                                <li class="elements">
+                                    <a asp-area="" asp-controller="Categories" asp-action="MarketingTopic" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="fa-solid fa-lightbulb"></i><span>Marketing - Bán hàng</span></a>
+                                </li>
+                                <li class="elements">
+                                    <a asp-area="" asp-controller="Categories" asp-action="FoodTopic" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="fa-solid fa-bowl-food"></i><span>Ẩm Thực - Nấu Ăn</span></a>
+                                </li>
+                                <li class="elements">
+                                    <a asp-area="" asp-controller="Categories" asp-action="FreeBook" class="iq-waves-effect collapsed"><i class="fa-solid fa-gift"></i><span> Sách miễn phí </span></a>
+                                </li>
+                                <li class="elements">
+                                    <a asp-area="" asp-controller="Categories" asp-action="TalkBook" class="iq-waves-effect collapsed"><i class="fa-solid fa-headphones"></i><span>Sách nói</span></a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        @if (isAdmin)
+                        {
+                            <li>
+                                <a asp-area="Admin" asp-controller="Manager" asp-action="Index" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="fa-solid fa-chart-simple"></i><span>Bảng điều khiển QTV</span></a>
+                                <ul id="pages" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                    <li><a href="admin-dashboard.html"><i class="ri-question-answer-line"></i>Dashboard</a></li>
+                                    <li>
+                                        <a href="#extra-pages" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-pantone-line"></i><span>Extra Pages</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                                        <ul id="extra-pages" class="iq-submenu collapse" data-parent="#pages">
+                                            <li><a href="pages-invoice.html"><i class="ri-question-answer-line"></i>Invoice</a></li>
+                                            <li><a href="pages-comingsoon.html"><i class="ri-mastercard-line"></i>Login</a></li>
+                                            <li><a href="pages-faq.html"><i class="ri-compasses-line"></i>Register</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+
+                <div class="image-carousel">
+                    <div class="carousel-slide">
+                        <img src="~/images/z6126137915660_be1fd9b7ff4160c4dfb58d00bfbbfc42.jpg" alt="Image 1" class="carousel-image">
+                        <img src="~/images/z6126137915725_5e7fd2583d429ba5692e5ec99a9acc0e.jpg" alt="Image 1" class="carousel-image">
+                        <img src="~/images/z6126137932287_733cda7afa5f34b8450d65d293c11c9f.jpg" alt="Image 1" class="carousel-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-------------------------------------------------------------------------------------------------------------------------------------------------------------->
+        <!-- TOP Nav Bar -->
+        <div class="iq-top-navbar">
+            <div class="iq-navbar-custom">
+                <nav class="navbar navbar-expand-lg navbar-light p-0">
+                    <div style="display:flex" class="navbar-breadcrumb">
+                        <button class="menu-button">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                        <a data-toggle="collapse" aria-expanded="true" asp-area="" asp-controller="Home" asp-action="Index">
+                            <div class="chat">
+                                <img src="/images/logo.png" alt="" srcset="" class="img-fluid" style="width: 80px;height: 71px;">
+                            </div>
+                        </a>
+                    </div>
+
+                    <div style="list-style:none;" class="search-menu-opt">
+                        <div class="iq-search-bar search-book d-flex align-items-center">
+                            <form id="search-form" action="/Books/SearchProducts" method="get" class="dropdown">
+                                <div class="input-group" style="position: relative; width: 100%;">
+                                    <!-- Input với icon -->
+                                    <input id="search-input" class="form-control" type="text" name="query" placeholder="Tìm Sản phẩm"
+                                           style="border-radius:5px; padding-right: 40px;" />
+                                    <i class="fa-solid fa-magnifying-glass"
+                                       style="position: absolute; right: 96px; top: 50%; transform: translateY(-50%); color: #aaa;"></i>
+                                    <!-- Kết quả tìm kiếm -->
+                                    <div id="search-results" class="dropdown-content" style="margin-top:46px">
+                                        <!-- Suggestions will be appended here -->
+                                    </div>
+                                    <!-- Nút tìm kiếm -->
+                                    <button style="border-radius:5px; color: #301616; font-weight: bold;" type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                </div>
+                            </form>
+                            @*  <!-- Search Suggestions  -->
+                            <form action="/Books/SearchProducts" method="get" class="dropdown">
+                            <input id="search-input" type="text" name="query" placeholder="Tìm Sản phẩm" />
+                            <div id="search-results" class="dropdown-content">
+                            <!-- Suggestions will be appended here -->
+                            </div>
+                            <input type="submit" value="Search" />
+                            </form> *@
+                        </div>
+                    </div>
+
+                    <div style="display:flex" class="navbar-breadcrumb">
+
+                        <partial name="_LoginPartial" />
+
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- TOP Nav Bar END -->
+
+        <!-------------------------------------------------------------------------------------------------------------------------------------------------------------->
+        <!-- CONTENT -->
+        <div id="content-page" class="content-page">
+            <div style="display:flex; justify-content:center;" class="container-fluid">
+
+
+                    @RenderBody()
+
+            </div>
+        </div>
+        @* @RenderSection("Scripts", required: false) *@
+    </div>
+    <!-- Wrapper END -->
+
+    <!-------------------------------------------------------------------------------------------------------------------------------------------------------------->
+    <!-- Footer -->
+    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn iq-footer" data-wow-delay="0.1s" style="margin-left:245px;">
+        <div class="container py-5 iq-footer1">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Thông tin liên lạc</h5>
+                    <p class="mb-2" style="width:216px;"><i class="fa fa-map-marker-alt me-3"></i>TRƯỜNG ĐẠI HỌC CÔNG NGHỆ TP.HCM (HUTECH)</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i> (028) 5445 7777</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>hutech@hutech.edu.vn</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href="https://twitter.com/hutechvietnam" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="https://www.facebook.com/hutechuniversity" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="https://www.youtube.com/c/HUTECHChannel" target="_blank"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Về TVQ Books</h5>
+                    <a asp-area="" asp-controller="Home" asp-action="AboutUs" class="btn btn-link text-white-50">Giới thiệu</a>
+                    <a asp-area="" asp-controller="Home" asp-action="Service" class="btn btn-link text-white-50">Sản phẩm</a>
+                    <a asp-area="" asp-controller="Home" asp-action="ContactUs" class="btn btn-link text-white-50">Liên hệ</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Chính sách</h5>
+                    <a asp-area="" asp-controller="Home" asp-action="TermOfUse" class="btn btn-link text-white-50">Điều khoản sử dụng</a>
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy" class="btn btn-link text-white-50">Chính sách bảo mật</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <img src="/images/logo.png" alt="" srcset="" class="img-fluid" style="height: 130px; width: auto; ">
+                    <h3 class="text-white mb-4">TVQ Books</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-------------------------------------------------------------------------------------------------------------------------------------------------------------->
+    <!-- Optional JavaScript -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Thêm Bootstrap JS (bao gồm cả Popper.js) - form đăng nhập -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!--  <script src="~/js/script.js"></script> vào layout.js -->
+    <script src="~/js/layout.js"></script>
+
+    <!--Start of Fchat.vn-->
+    <script type="text/javascript" src="https://cdn.fchat.vn/assets/embed/webchat.js?id=6735e3092db667742f20acc4" async="async"></script>
+    <!--End of Fchat.vn-->
+
+</body>
+
+</html>
