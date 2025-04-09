@@ -1,0 +1,225 @@
+﻿@using Microsoft.AspNetCore.Html
+@model IEnumerable<BookWeb.Models.Order>
+
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+}
+
+<h2 class="text-center mb-4">Danh sách đơn hàng</h2>
+
+<form asp-action="FilterOrders" method="get" class="form-inline mb-3">
+    <div class="form-group mr-2">
+        <label for="search" class="mr-2">Tìm kiếm:</label>
+        <input type="text" id="search" name="search" value="@ViewBag.Search" class="form-control" placeholder="Tên khách hàng hoặc mã đơn hàng" />
+    </div>
+
+    <div class="form-group mr-2">
+        <label for="fromDate" class="mr-2">Từ ngày:</label>
+        <input type="date" name="fromDate" id="fromDate" class="form-control" value="@ViewBag.FromDate" />
+    </div>
+
+    <div class="form-group mr-2">
+        <label for="toDate" class="mr-2">Đến ngày:</label>
+        <input type="date" name="toDate" id="toDate" class="form-control" value="@ViewBag.ToDate" />
+    </div>
+
+    <div class="form-group mr-2">
+        <label for="paymentMethod" class="mr-2">Phương thức thanh toán:</label>
+        <select name="paymentMethod" id="paymentMethod" class="form-control">
+            <option value="">Tất cả</option>
+            @Html.Raw(
+                     new HtmlString("<option value='COD'" + (ViewBag.PaymentMethod == "COD" ? " selected" : "") + ">COD</option>")
+                     )
+            @Html.Raw(
+                     new HtmlString("<option value='Momo'" + (ViewBag.PaymentMethod == "Momo" ? " selected" : "") + ">Momo</option>")
+                     )
+            @* <option value="COD" @((ViewBag.PaymentMethod == "COD"))> COD </option>
+            <option value="Momo" @(ViewBag.PaymentMethod == "Momo" ? "selected" : "")>Momo</option> *@
+        </select>
+    </div>
+
+    <div class="form-group mr-2">
+        <label for="status" class="mr-2">Trạng thái:</label>
+        <select id="status" name="status" class="form-control">
+            <option value="">Tất cả</option>
+            @Html.Raw(
+                     new HtmlString("<option value='Chờ xác nhận'" + (ViewBag.Status == "Chờ xác nhận" ? " selected" : "") + ">Chờ xác nhận</option>")
+                     )
+            @Html.Raw(
+                     new HtmlString("<option value='Đang giao hàng'" + (ViewBag.Status == "Đang giao hàng" ? " selected" : "") + ">Đang giao hàng</option>")
+                     )
+            @Html.Raw(
+                     new HtmlString("<option value='Giao hàng thành công'" + (ViewBag.Status == "Giao hàng thành công" ? " selected" : "") + ">Giao hàng thành công</option>")
+                     )
+            @Html.Raw(
+                     new HtmlString("<option value='Đang yêu cầu huỷ'" + (ViewBag.Status == "Đang yêu cầu huỷ" ? " selected" : "") + ">Đang yêu cầu huỷ</option>")
+                     )
+            @Html.Raw(
+                     new HtmlString("<option value='Đã huỷ'" + (ViewBag.Status == "Đã huỷ" ? " selected" : "") + ">Đã huỷ</option>")
+                     )
+        </select>
+    </div>
+    @* <div class="form-group mr-2">
+        <label for="status" class="mr-2">Trạng thái:</label>
+        <select id="status" name="status" class="form-control">
+            <option value="">Tất cả</option>
+            <option value="Chờ xác nhận">Chờ xác nhận</option>
+            <option value="Đang giao hàng">Đang giao hàng</option>
+            <option value="Giao hàng thành công")>Giao hàng thành công</option>
+            <option value="Đang yêu cầu huỷ">Đang yêu cầu huỷ</option>
+            <option value="Đã huỷ">Đã huỷ</option>
+        </select>
+    </div> *@
+
+    <button type="submit" class="btn btn-primary">Lọc</button>
+</form>
+
+@if (!Model.Any())
+{
+    <p>Không có đơn hàng nào.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Mã đơn hàng</th>
+                <th>Khách hàng</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Phương thức thanh toán</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.Name</td>
+                    <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@string.Format("{0:N0} VND", order.TotalPrice)</td>
+                    <td>@order.PaymentMethod</td>
+                    <td>@order.Status</td>
+                    <td>
+                        @if (order.Status == "Đang yêu cầu huỷ")
+                        {
+                            <!-- Form chấp nhận huỷ đơn hàng -->
+                            <form asp-action="ConfirmCancel" method="post" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn huỷ đơn hàng này?');">
+                                <input type="hidden" name="orderId" value="@order.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-check"></i>Xác nhận</button>
+                            </form>
+
+                            <!-- Form từ chối huỷ đơn hàng -->
+                            <form asp-action="RejectCancel" method="post" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn từ chối yêu cầu huỷ?');">
+                                <input type="hidden" name="orderId" value="@order.Id" />
+                                <button type="submit" class="btn btn-secondary btn-sm"><i class="fas fa-times"></i>Từ chối</button>
+                            </form>
+                        }
+                        else if (order.Status == "Chờ xác nhận")
+                        {
+                            <!-- Form xác nhận đơn hàng -->
+                            <form asp-action="ConfirmOrder" method="post" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận đơn hàng này?');">
+                                <input type="hidden" name="orderId" value="@order.Id" />
+                                <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i>Xác nhận</button>
+                            </form>
+
+                            <!-- Form từ chối đơn hàng -->
+                            <form asp-action="CancelOrder" method="post" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn huỷ đơn hàng này?');">
+                                <input type="hidden" name="orderId" value="@order.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i>Từ chối</button>
+                            </form>
+
+                        }
+                        else if (order.Status == "Đang giao hàng")
+                        {
+                            <!-- Form xác nhận đơn hàng giao thành công -->
+                            <form asp-action="MarkOrderAsDelivered" method="post" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn đơn hàng này đã giao thành công?');">
+                                <input type="hidden" name="orderId" value="@order.Id" />
+                                <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i>Thành công</button>
+                            </form>
+
+                            <!-- Form xác nhận đơn hàng đơn hàng giao thất bại -->
+                            <form asp-action="MarkOrderAsFailed" method="post" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn đơn hàng này đã huỷ?');">
+                                <input type="hidden" name="orderId" value="@order.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i>Đã huỷ</button>
+                            </form>
+
+                        }
+                        @* else
+                        {
+                            <!-- Form cập nhật trạng thái -->
+                            <form asp-action="UpdateOrderStatus" method="post" style="display:inline-block;">
+                                <input type="hidden" name="id" value="@order.Id" />
+                                <select name="status" class="form-control form-control-sm" style="display:inline-block; width:auto;">
+                                    <option value="Chờ xác nhận" selected="@(order.Status == "Chờ xác nhận" ? "selected" : null)">Chờ xác nhận</option>
+                                    <option value="Đang giao hàng" selected="@(order.Status == "Đang giao hàng" ? "selected" : null)">Đang giao hàng</option>
+                                    <option value="Giao hàng thành công" selected="@(order.Status == "Giao hàng thành công" ? "selected" : null)">Giao hàng thành công</option>
+                                    <option value="Đã huỷ" selected="@(order.Status == "Đã huỷ" ? "selected" : null)">Đã huỷ</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm">Cập nhật</button>
+                            </form>
+
+                            <!-- Form xóa đơn hàng -->
+                            <form asp-action="DeleteOrder" method="post" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                            </form>
+                        } *@
+
+                        <a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-info btn-sm"><i class="fas fa-info-circle"></i>Chi tiết</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<nav aria-label="Page navigation">
+    <div class="d-flex justify-content align-items-center mb-3">
+        <!-- Hiển thị tổng số đơn hàng -->
+        <div class="form-group ml-4 d-flex align-items-center">
+            <label class="font-weight-bold mr-2">Tổng số đơn hàng:</label>
+            <span class="p-2">@ViewBag.TotalOrders</span>
+        </div>
+        <!-- Thanh phân trang -->
+        <ul class="pagination mb-0 mx-auto" style="margin-left: auto; margin-right: auto;">
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="FilterOrders" asp-route-page="@(ViewBag.CurrentPage - 1)"
+                       asp-route-search="@ViewBag.Search"
+                       asp-route-fromDate="@ViewBag.FromDate"
+                       asp-route-toDate="@ViewBag.ToDate"
+                       asp-route-paymentMethod="@ViewBag.PaymentMethod"
+                       asp-route-status="@ViewBag.Status">Trước</a>
+                </li>
+            }
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="FilterOrders" asp-route-page="@i"
+                       asp-route-search="@ViewBag.Search"
+                       asp-route-fromDate="@ViewBag.FromDate"
+                       asp-route-toDate="@ViewBag.ToDate"
+                       asp-route-paymentMethod="@ViewBag.PaymentMethod"
+                       asp-route-status="@ViewBag.Status">@i</a>
+                </li>
+            }
+
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="FilterOrders" asp-route-page="@(ViewBag.CurrentPage + 1)"
+                       asp-route-search="@ViewBag.Search"
+                       asp-route-fromDate="@ViewBag.FromDate"
+                       asp-route-toDate="@ViewBag.ToDate"
+                       asp-route-paymentMethod="@ViewBag.PaymentMethod"
+                       asp-route-status="@ViewBag.Status">Sau</a>
+                </li>
+            }
+        </ul>
+    </div>
+</nav>

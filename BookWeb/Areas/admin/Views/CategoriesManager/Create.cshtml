@@ -1,0 +1,37 @@
+﻿@model BookWeb.Models.Category
+
+@{
+    ViewData["Title"] = "Thêm mới Thể loại";
+    Layout = "~/Areas/admin/Views/Shared/_LayoutAdmin.cshtml";    
+}
+
+<h1 class="text-center text-primary mb-4">Thêm mới Thể loại</h1>
+
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Tên thể loại -->
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Tên thể loại</label>
+                <input asp-for="Name" class="form-control" placeholder="Nhập tên thể loại" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <!-- Mô tả -->
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Mô tả</label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Nhập mô tả"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <!-- Nút submit -->
+            <div class="form-group d-flex justify-content-center">
+                <input type="submit" value="Thêm" class="btn btn-success mx-3" />
+                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+            </div>
+        </form>
+    </div>
+</div>

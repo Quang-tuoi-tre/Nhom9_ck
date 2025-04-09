@@ -1,0 +1,105 @@
+﻿@model BookWeb.Models.Book
+
+@{
+    ViewData["Title"] = "Xóa Sách";
+    Layout = "~/Areas/admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1 class="text-center mb-4">Xóa Sách</h1>
+
+<div class="card">
+    <div class="card-header">
+        <h4>Thông Tin Sách</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Cột bên trái: Hình ảnh, Audio, PDF -->
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <dt class="font-weight-bold">Hình ảnh</dt>
+                    <dd>
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="/images/@Model.ImageUrl" alt="Product Image" class="img-fluid" style="max-width: 100%; border-radius: 8px;" />
+                        }
+                        else
+                        {
+                            <span>Chưa có hình ảnh</span>
+                        }
+                    </dd>
+                </div>
+
+                <div class="mb-3">
+                    <dt class="font-weight-bold">Audio</dt>
+                    <dd>
+                        @if (!string.IsNullOrEmpty(Model.AudioFileUrl))
+                        {
+                            <audio controls class="w-100">
+                                <source src="@Model.AudioFileUrl" type="audio/mp3" />
+                                Your browser does not support the audio element.
+                            </audio>
+                        }
+                        else
+                        {
+                            <span>Chưa có file audio</span>
+                        }
+                    </dd>
+                </div>
+
+                <div class="mb-3">
+                    <dt class="font-weight-bold">PDF</dt>
+                    <dd>
+                        @if (!string.IsNullOrEmpty(Model.pdf))
+                        {
+                            <a href="@Model.pdf" target="_blank" class="btn btn-link">Xem PDF</a>
+                        }
+                        else
+                        {
+                            <span>Chưa có PDF</span>
+                        }
+                    </dd>
+                </div>
+            </div>
+
+            <!-- Cột bên phải: Các thông tin sách -->
+            <div class="col-md-8">
+                <dl class="row">
+                    <dt class="col-sm-4 font-weight-bold">Tên</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Name)</dd>
+
+                    <dt class="col-sm-4 font-weight-bold">Thể loại</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Category.Name)</dd>
+
+                    <dt class="col-sm-4 font-weight-bold">Tác giả</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Author.Name)</dd>
+
+                    <dt class="col-sm-4 font-weight-bold">Mô tả</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Description)</dd>
+
+                    <dt class="col-sm-4 font-weight-bold">Giá</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Price) VNĐ</dd>
+
+                    @if (Model.Price != 0)
+                    {
+                        <dt class="col-sm-4 font-weight-bold">Sách tồn kho</dt>
+                        <dd class="col-sm-8">
+                            <span>@Model.StockQuantity</span>
+                            <!-- Nút mở Modal -->
+                            @* <button class="btn btn-primary" data-toggle="modal" data-target="#updateModal"
+                                    data-id="@Model.Id" data-stock="@Model.StockQuantity" data-name="@Model.Name">
+                                Điều chỉnh
+                            </button> *@
+                        </dd>
+                    }
+                </dl>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <form method="post" asp-action="Delete" asp-route-id="@Model?.Id">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa sách này?')">Xóa Sách</button>
+                <a class="btn btn-secondary" asp-action="Index">Quay Lại Danh Sách</a>
+            </form>
+        </div>
+    </div>
+</div>
