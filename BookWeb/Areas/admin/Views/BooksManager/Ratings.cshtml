@@ -1,0 +1,76 @@
+﻿@model BookWeb.Models.Book
+
+@{
+    ViewData["Title"] = "Đánh giá cho " + Model.Name;
+}
+
+<div class="container mt-4">
+    <h3 class="text-center mb-4"><span class="text-primary">@Model.Name</span></h3>
+    <p>Số lượng đánh giá: @Model.Ratings.Count()</p>
+
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Người dùng</th>
+                <th>Số sao</th>
+                <th>Thời gian</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Ratings != null && Model.Ratings.Any())
+            {
+                @foreach (var rating in Model.Ratings)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-icon mr-2">
+                                    <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <div>
+                                    <strong>@rating.UserId</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= rating.Star)
+                                {
+                                    <i class="bi bi-star-fill text-warning"></i> <!-- Ngôi sao đầy -->
+                                }
+                                else
+                                {
+                                    <i class="bi bi-star text-muted"></i> <!-- Ngôi sao rỗng -->
+                                }
+                            }
+                        </td>
+                        <td>@rating.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @if (User.IsInRole("admin"))
+                            {
+                                <form asp-controller="BooksManager" asp-action="DeleteRating" method="post" class="d-inline">
+                                    <input type="hidden" name="ratingId" value="@rating.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa đánh giá này?');">Xóa</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-center text-muted">Không có đánh giá nào.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-center mt-3">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>

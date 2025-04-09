@@ -1,0 +1,174 @@
+﻿@model IEnumerable<BookWeb.Models.Order>
+
+@{    
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-6 col-lg-3">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+            <div class="iq-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle iq-card-icon bg-primary"><i class="fa-solid fa-user"></i></div>
+                    <div class="text-left ml-3">
+                        <h2 class="mb-0"><span class="counter">@ViewData["UserCount"]</span></h2>
+                        <h5 class="">Người dùng</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+            <div class="iq-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle iq-card-icon bg-danger"><i class="fa-solid fa-book"></i></div>
+                    <div class="text-left ml-3">
+                        <h2 class="mb-0"><span class="counter">@ViewData["BookCount"]</span></h2>
+                        <h5 class="">Sách</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+            <div class="iq-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle iq-card-icon bg-warning"><i class="fa-solid fa-cart-shopping"></i></div>
+                    <div class="text-left ml-3">
+                        <h2 class="mb-0"><span class="counter">@ViewData["OrderCount"]</span></h2>
+                        <h5 class="">Đơn Hàng</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+            <div class="iq-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle iq-card-icon bg-info"><i class="fa-solid fa-hourglass-start"></i></div>
+                    <div class="text-left ml-3">
+                        <h2 class="mb-0">
+                            <span class="counter">
+                                @{
+                                    decimal totalRevenue = 0; // Gán mặc định là 0
+                                    if (ViewData["TotalRevenue"] != null)
+                                    {
+                                        // Cố gắng parse giá trị, nếu không parse được sẽ gán giá trị mặc định là 0
+                                        decimal.TryParse(ViewData["TotalRevenue"].ToString(), out totalRevenue);
+                                    }
+                                }
+                                @totalRevenue
+                            </span>
+                        </h2>
+                        <h5 class="">Doanh Thu</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+            <div class="iq-card-header d-flex justify-content-between align-items-center">
+                <div class="iq-header-title">
+                    <h4 class="card-title mb-0">Doanh số hàng ngày (Đang cập nhật)</h4>
+                </div>
+            </div>
+            <div class="iq-card-body">
+                <div id="iq-sale-chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+            <div class="iq-card-header d-flex justify-content-between align-items-center">
+                <div class="iq-header-title">
+                    <h4 class="card-title mb-0">Tóm lược trạng thái đơn hàng</h4>
+                </div>
+            </div>
+            <div class="iq-card-body">
+                <ul class="list-inline p-0 mb-0">
+                    <!-- Chờ duyệt -->
+                    <li>
+                        <div class="iq-details mb-2">
+                            <span class="title">Chờ xác nhận</span>
+                            <div class="percentage float-right text-warning">@ViewBag.PendingPercentage <span>%</span></div>
+                            <div class="iq-progress-bar-linear d-inline-block w-100">
+                                <div class="iq-progress-bar iq-bg-warning">
+                                    <span class="bg-warning" style="width: @ViewBag.PendingPercentage%"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Đang giao hàng -->
+                    <li>
+                        <div class="iq-details mb-2">
+                            <span class="title">Đang giao hàng</span>
+                            <div class="percentage float-right text-info">@ViewBag.InProgressPercentage <span>%</span></div>
+                            <div class="iq-progress-bar-linear d-inline-block w-100">
+                                <div class="iq-progress-bar iq-bg-info">
+                                    <span class="bg-info" style="width: @ViewBag.InProgressPercentage%"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Đã hoàn thành -->
+                    <li>
+                        <div class="iq-details mb-2">
+                            <span class="title">Giao hàng thành công</span>
+                            <div class="percentage float-right text-success">@ViewBag.CompletedPercentage <span>%</span></div>
+                            <div class="iq-progress-bar-linear d-inline-block w-100">
+                                <div class="iq-progress-bar iq-bg-success">
+                                    <span class="bg-success" style="width: @ViewBag.CompletedPercentage%"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Đã huỷ -->
+                    <li>
+                        <div class="iq-details mb-2">
+                            <span class="title">Đã huỷ</span>
+                            <div class="percentage float-right text-danger">@ViewBag.CanceledPercentage <span>%</span></div>
+                            <div class="iq-progress-bar-linear d-inline-block w-100">
+                                <div class="iq-progress-bar iq-bg-danger">
+                                    <span class="bg-danger" style="width: @ViewBag.CanceledPercentage%"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>                    
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+            <div class="iq-card-body">
+                <h4 class="text-uppercase text-black mb-0">Phiên (Đang cập nhật)</h4>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="font-size-80 text-black">12</div>
+                    <div class="text-left">
+                        <p class="m-0 text-uppercase font-size-12">1 giờ</p>
+                        <div class="mb-1 text-black">1500<span class="text-danger"><i class="fa-solid fa-arrow-down-long"></i>3.25%</span></div>
+                        <p class="m-0 text-uppercase font-size-12">1 ngày</p>
+                        <div class="mb-1 text-black">1890<span class="text-success"><i class="fa-solid fa-arrow-down-long"></i>1.00%</span></div>
+                        <p class="m-0 text-uppercase font-size-12">1 tuần</p>
+                        <div class="text-black">1260<span class="text-danger"><i class="fa-solid fa-arrow-down-long"></i></i>9.87%</span></div>
+                    </div>
+                </div>
+                <div id="wave-chart-7"></div>
+            </div>
+        </div>
+    </div>    
+</div>

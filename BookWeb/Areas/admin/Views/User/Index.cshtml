@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@model PaginatedList<ApplicationUser>
+
+@{
+    
+}
+
+<h2 class="text-center mb-4">Danh sách tài khoản</h2>
+
+<div class="search-container d-flex justify-content-between align-items-center mb-4">
+    <a id="manage" asp-controller="User" asp-action="Roles" class="btn btn-success btn-lg">Quản Lý Quyền</a>
+    @using (Html.BeginForm("Index", "User", FormMethod.Get))
+    {
+        <div class="input-group">
+            <input type="text" name="query" value="@ViewBag.Query" placeholder="Tìm theo tên..." class="form-control d-inline-block" />
+            <div class="input-group-append">
+                <input type="submit" value="Tìm kiếm" class="btn btn-primary" />
+            </div>
+        </div>
+    }
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tên tài khoản</th>
+            <th>Số điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Quyền</th>
+            <th>Hành động<th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var user in Model)
+        {
+            var roles = await UserManager.GetRolesAsync(user);
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.PhoneNumber</td>
+                <td>@user.Address</td>
+                <td>
+                    @if (roles.Any())
+                    {
+                        @string.Join(", ", roles)
+                        // Hiển thị các role cách nhau bởi dấu phẩy
+                    }
+                    else
+                    {
+                        <span>Chưa phân quyền</span>
+                    }
+                </td>
+
+                <td>
+                    @if (user.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow)
+                    {
+                        <a href="@Url.Action("UnlockUser", "User", new { id = user.Id })" class="btn btn-warning">Mở khoá</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("LockUser", "User", new { id = user.Id })" class="btn btn-warning">Khoá</a>
+                    }
+                    <button data-toggle="modal" data-target="#roleModal-@user.Id" class="btn btn-secondary">Phân Quyền</button>
+                </td>
+            </tr>
+
+            <!-- Modal phân quyền -->
+            <div class="modal fade" id="roleModal-@user.Id" tabindex="-1" role="dialog" aria-labelledby="roleModalLabel-@user.Id" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="roleModalLabel-@user.Id">Phân Quyền cho @user.UserName</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @using (Html.BeginForm("AssignRole", "User", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="userId" value="@user.Id" />
+
+                                <div class="form-group">
+                                    <label for="roles">Chọn Quyền:</label>
+                                    <select name="role" id="roles" class="form-control">
+                                        @foreach (var role in ViewBag.AllRoles)
+                                        {
+                                            <option value="@role.Name">@role.Name</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Cập nhật quyền</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-center mt-4">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @for (int i = 1; i <= @Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == @Model.PageIndex ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { pageNumber = i, query = ViewBag.Query })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
